@@ -153,16 +153,115 @@ void canopyFlow::computeWind()
     Aar(Aar.rows()-1,Aar.cols()-2) = I0l(I0l.rows()-1);
     Aar(Aar.rows()-1,Aar.cols()-1) = K0l(K0l.rows()-1);
 
-    std::cout << Aar;
+    //std::cout << Aar;
 
     Eigen::VectorXd CD(xar.rows());
 
     CD = Aar.colPivHouseholderQr().solve(xar);
 
     Eigen::VectorXi Ncan(zhfrac.rows()-1);
-    Ncan.array() = (int)((1.0/delh)*(zhfrac(0)-zhfrac.segment(1,zhfrac.rows()-1).array()) + 0.5);
 
-    std::cout << Ncan;
+    double temp1 = zhfrac(0);   //have to make this temporary to evaluate expression below for some reason...  Eigen problem...
+
+    Ncan = ((1.0/delh)*(temp1-zhfrac.segment(1,zhfrac.rows()-1).array()) + 0.5).cast<int>();
+    //std::cout << Ncan;
+
+    Eigen::VectorXd ZA(Ncan(zhfrac.rows()-2)+2);
+    Eigen::VectorXd UzUh(Ncan(zhfrac.rows()-2)+2);
+    Eigen::VectorXd dUun(Ncan(zhfrac.rows()-2)+2);
+
+    temp1 = Aj(0);
+    ZA.segment(0,static_cast<int> (Ncan(0)+1)) = 2.0*(temp1*z01.segment(0,static_cast<int>(Ncan(0))+1)).cwiseSqrt();
+    for(int m=0; m<=Ncan(0); m++)
+        UzUh(m) = CD(0)*boost::math::cyl_bessel_i(0.0,(double)ZA(m)) + CD(1)*boost::math::cyl_bessel_k(0.0,(double)ZA(m)) + Uph;
+    for(int m=0; m<=Ncan(0); m++)
+        dUun(m) = ZA(m)*(CD(0)*boost::math::cyl_bessel_i(1.0,(double)ZA(m))-CD(1)*boost::math::cyl_bessel_k(1.0,(double)ZA(m))) / z01(m);
+
+    for(int n=1; n<zhfrac.rows()-2; n++)
+    {
+        for(int m=Ncan(n-1)+1; m<Ncan(n); m++)
+        {
+            ZA(m) = 2.0*sqrt((double)(Aj(n)*z01(m)));
+            UzUh(m) = CD(2*n)*boost::math::cyl_bessel_i(0.0,(double)ZA(m)) + CD(2*n+1)*boost::math::cyl_bessel_k(0.0,(double)ZA(m)) + Uph;
+            dUun(m) = ZA(m)*(CD(2*n)*boost::math::cyl_bessel_i(1.0,(double)ZA(m))-CD(2*n+1)*boost::math::cyl_bessel_k(1.0,(double)ZA(m))) / z01(m);
+        }
+    }
+
+    temp1 = Aj(folfrac.rows()-1);
+    int start = Ncan(zhfrac.rows()-3)+1;
+    int sizeVec = Ncan(zhfrac.rows()-2)  -  Ncan(zhfrac.rows()-3);
+    ZA.segment(start,sizeVec) = 2.0*(temp1*z01.segment(start,sizeVec)).cwiseSqrt();
+    //for(int m=Ncan(zhfrac.rows()-3)+1; m<=Ncan(zhfrac.rows()-2); m++)
+    for(int m=start; m<=sizeVec; m++)
+        UzUh(m) = CD(CD.rows()-2)*boost::math::cyl_bessel_i(0.0,(double)ZA(m)) + CD(CD.rows()-1)*boost::math::cyl_bessel_k(0.0,(double)ZA(m)) + Uph;
+    //for(int m=Ncan(zhfrac.rows()-3)+1; m<=Ncan(zhfrac.rows()-2); m++)
+    for(int m=start; m<=sizeVec; m++)
+        dUun(m) = ZA(m)*(CD(CD.rows()-2)*boost::math::cyl_bessel_i(1.0,(double)ZA(m))-CD(CD.rows()-1)*boost::math::cyl_bessel_k(1.0,(double)ZA(m))) / z01(m);
+
+    Eigen::VectorXd dUdz(dUun.rows());
+    dUdz = dUun.array()/dUun(0);
+
+    double vkar = 0.4;  //Von Karman constant
+    double b1 = 0.35 + vkar/log(z0h);
+    double beta = 0.35 - b1*exp(-4.0*FAI);
+
+    Eigen::VectorXd Ust2(dUdz.rows());
+    Ust2 = z01.array() * dUdz.array();
+
+/////////////////////////////////////////////////////////
+
+    PLFLT xmin =0, ymin=0, xmax=5, ymax=30,
+        x[6]= {0.0, 1.0, 2.0, 3.0, 4.0, 5.0},
+        y[6] = {0., 1.0, 4.0, 9.1, 15.5, 25.3};
+      PLINT just=0, axis=0;
+      plstream *pls;
+
+      // plplot initialization
+
+      pls = new plstream();  // declare plplot object
+
+      //plsdev("wxwidgets"); // sets the plot device to WX Widget which
+                     // allows for viewing and saving the plot to a file
+                     // Note that saving postscript from within widgets is buggy.
+                     // other useful values in place of wxwidgets:
+                     // xwin - X-window display to screen
+                     // ps - postscript file
+                     // psc - color postscript file
+                     // Or just comment out line to get a list of choices
+      //plsdev("psc");
+      plsdev("svg"); //cairo uses the same color scheme as on screen - black on
+                            //red on black default
+      plsfnam("test2.svg");// sets the names of the output file
+
+      // Parse and process command line arguments.
+      //pls->parseopts( &argc, argv, PL_PARSE_FULL ); // device and other options
+                    // can be set from the command-line:
+                    // -dev devname        sets the output device to "devname"
+                    // -o output_file      sets the output file name to output_file                // -h                  gives a list of all possible options
+
+
+      pls->init();           // start plplot object
+      pls->env(xmin, xmax, ymin, ymax, just, axis );
+        //Setup window size
+        // - just=0 sets axis so they scale indepedently
+        // - axis=0 draw axis box, ticks, and numeric labels
+        //   see "man plenv" for details
+      pls->lab( "(x)", "(y)", "PlPlot example title");
+
+      // Plot the data points - (num_points, x, y. plot_symbol)
+      //  - plot_symbol=9 sets a circle with a dot in the
+      // middle for the plot symbol - see "man plpoin"
+      pls->poin( 6, x, y, 9 );
+
+      delete pls; // close plot
+
+
+
+
+
+
+
+
 
 }
 
