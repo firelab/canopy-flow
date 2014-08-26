@@ -41,24 +41,23 @@ PROJECT(canopy_flow)
 # Have to check docs for actual support of our features.  We use static libs
 # on windows just because it's easier.
 # *****************************************************************************
-INCLUDE(FindBoost)
-SET(Boost_DEBUG ON)
-IF(WIN32)
-    SET(Boost_USE_STATIC_LIBS ON)
-ELSE(WIN32)
-    SET(Boost_USE_STATIC_LIBS OFF)
-ENDIF(WIN32)
-SET(Boost_USE_MULTITHREAD OFF)
-FIND_PACKAGE(Boost 1.41.1 COMPONENTS special_functions)
-# FIND_PACKAGE(Boost 1.41.1 COMPONENTS math REQUIRED)
+#INCLUDE(FindBoost)
+#SET(Boost_DEBUG ON)
+#IF(WIN32)
+#    SET(Boost_USE_STATIC_LIBS ON)
+#ELSE(WIN32)
+#    SET(Boost_USE_STATIC_LIBS OFF)
+#ENDIF(WIN32)
+#SET(Boost_USE_MULTITHREAD OFF)
+#FIND_PACKAGE(Boost 1.41.1 COMPONENTS special_functions)
+#FIND_PACKAGE(Boost 1.41.1 COMPONENTS math REQUIRED)
 
-FIND_PATH(EIGEN_INCLUDES eigen3/Eigen/Dense)
 FIND_LIBRARY(PLPLOT_LIB plplotd)
 FIND_LIBRARY(PLPLOT_LIB_CXX plplotcxxd)
 FIND_PATH(PLPLOT_INCLUDES plstream.h /usr/include/plplot)
 
-INCLUDE_DIRECTORIES(${EIGEN_INCLUDES} ${PLPLOT_INCLUDES} ${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
 
-ADD_EXECUTABLE(canopy_flow source/canopyFlow.cpp source/main.cpp)
-TARGET_LINK_LIBRARIES(canopy_flow ${Boost_LIBRARIES} ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
+ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp src/canopy.cpp src/main.cpp)
+TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
 
