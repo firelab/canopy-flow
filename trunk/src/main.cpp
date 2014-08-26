@@ -5,9 +5,11 @@
 
 int main() {
 
-    canopyFlow C;
+    canopyFlow wind;
 
-    C.computeWind();
+    wind.computeWind();
+
+    wind.C.plot_haz();
 
     std::cout << "Done!" << std::endl;
     return 0;
