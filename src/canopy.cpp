@@ -9,12 +9,13 @@ canopy::canopy()
     heightMaxFoliageDist = 0.5;
     standardDevFoliageDist = 0.25;
     numNodes = 101;   //MUST BE ODD NUMBER
-    cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
+    cellsize = 0.0;    //cellsize here is normalized from 0 to 1
     cumulativeLeafDragArea = NULL;
     haz = NULL;
     hacpz = NULL;
     zetaz = NULL;
     zetah = 0.0;
+    z0gh = 0.0;
 }
 
 canopy::canopy(canopy &rhs)
@@ -37,6 +38,7 @@ canopy::canopy(canopy &rhs)
     if(rhs.zetaz)
         memcpy(zetaz, rhs.zetaz, sizeof(double) * numNodes);
     zetah = rhs.zetah;
+    z0gh = rhs.z0gh;
 }
 
 canopy &canopy::operator=(const canopy &rhs)
@@ -60,6 +62,7 @@ canopy &canopy::operator=(const canopy &rhs)
             memcpy(hacpz, rhs.hacpz, sizeof(double) * numNodes);
         if(rhs.zetaz)
             memcpy(zetaz, rhs.zetaz, sizeof(double) * numNodes);
+        z0gh = rhs.z0gh;
     }
     return *this;
 }
@@ -82,12 +85,14 @@ void canopy::initialize()
     haz = new double[numNodes];
     hacpz = new double[numNodes];
     zetaz = new double[numNodes];
+    z0gh = z0g/h;
+    cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
 
     compute_haz();
     compute_foliage_drag_area_index();
 }
 
-void canopy::plot_haz()
+void canopy::plot()
 {
     double max = haz[0];
     for(int i=0; i<numNodes; i++)
@@ -110,12 +115,24 @@ void canopy::plot_haz()
     double* x = new double[numNodes];
     for(int i=0; i<numNodes; i++)
     {
-        x[i] = haz[i]/max;
+
+
+
+
+        //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //x[i] = haz[i]/max;
+        x[i] = haz[i];
+        //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
         if(i%100 == 0)
             printf("%lf\t%lf\n",x[i], y[i]);
     }
 
-    PLFLT xmin =0, ymin=0, xmax=1, ymax=1;
+    PLFLT xmin =0, ymin=0, xmax=0.001, ymax=1;
 
     PLINT just=0, axis=0;
     plstream *pls;
@@ -133,9 +150,9 @@ void canopy::plot_haz()
     // psc - color postscript file
     // Or just comment out line to get a list of choices
     //plsdev("psc");
-    plsdev("png"); //cairo uses the same color scheme as on screen - black on
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
     //red on black default
-    plsfnam("haz.png");// sets the names of the output file
+    plsfnam("haz.pdf");// sets the names of the output file
 
     // Parse and process command line arguments.
     //pls->parseopts( &argc, argv, PL_PARSE_FULL ); // device and other options
@@ -150,7 +167,7 @@ void canopy::plot_haz()
     // - just=0 sets axis so they scale indepedently
     // - axis=0 draw axis box, ticks, and numeric labels
     //   see "man plenv" for details
-    pls->lab( "(haz/max)", "(z/h)", "haz plot");
+    pls->lab( "haz/max", "z/h", "haz plot");
 
     // Plot the data points - (num_points, x, y. plot_symbol)
     //  - plot_symbol=9 sets a circle with a dot in the
@@ -171,7 +188,23 @@ void canopy::compute_haz()
     double norm;
     double hazn;
     double integHazn = 0.0;
-    double intermediate = cellsize*2.0 / 3.0;
+
+
+
+
+
+    //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //double intermediate = cellsize*2.0 / 3.0;
+    double intermediate = 2.0 / 3.0;
+    //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
 
     for(int i=0; i<numNodes; i++)   //integrate using extened simpson's rule
     {
@@ -183,7 +216,7 @@ void canopy::compute_haz()
             integHazn += 2.0 * haz[i];
     }
 
-    integHazn = integHazn - 0.5 * (haz[0] + haz[numNodes]);
+    integHazn = integHazn - 0.5 * (haz[0] + haz[numNodes-1]);
     integHazn *= intermediate;
 
     for(int i=0; i<numNodes; i++)
@@ -204,11 +237,11 @@ double canopy::get_shelterFactor(double hazi)
 void canopy::compute_foliage_drag_area_index()
 {
 
-    hacpz[0] = get_dragCoef(0) * haz[0] / get_dragCoef(0);
+    hacpz[0] = get_dragCoef(0) * haz[0] / get_shelterFactor(0);
     zetaz[0] = 0.0;
     for(int i=1;i<numNodes;i++)
     {
-        hacpz[i] = get_dragCoef(i*cellsize) * haz[i] / get_dragCoef(i*cellsize);
+        hacpz[i] = get_dragCoef(i*cellsize) * haz[i] / get_shelterFactor(i*cellsize);
         zetaz[i] = zetaz[i-1] + (hacpz[i-1] + hacpz[i]) * 0.5;
     }
     zetah = zetaz[numNodes-1];
