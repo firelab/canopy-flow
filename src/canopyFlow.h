@@ -27,6 +27,7 @@ public:
 
     void computeWind();
 
+
 protected:
     double H;   //height above canopy top.
     double UH;  //wind speed at H

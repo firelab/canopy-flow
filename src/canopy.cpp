@@ -8,12 +8,12 @@ canopy::canopy()
     dragCoefAth = 0.2;
     heightMaxFoliageDist = 0.5;
     standardDevFoliageDist = 0.25;
-    numNodes = 10001;   //MUST BE ODD NUMBER
+    numNodes = 101;   //MUST BE ODD NUMBER
     cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
-    cumulativeLeafDragArea = new double[numNodes];
-    haz = new double[numNodes];
-    hacpz = new double[numNodes];
-    zetaz = new double[numNodes];
+    cumulativeLeafDragArea = NULL;
+    haz = NULL;
+    hacpz = NULL;
+    zetaz = NULL;
     zetah = 0.0;
 }
 
@@ -60,7 +60,6 @@ canopy &canopy::operator=(const canopy &rhs)
             memcpy(hacpz, rhs.hacpz, sizeof(double) * numNodes);
         if(rhs.zetaz)
             memcpy(zetaz, rhs.zetaz, sizeof(double) * numNodes);
-        zetah = rhs.zetah;
     }
     return *this;
 }
@@ -73,12 +72,17 @@ canopy::~canopy()
     haz = NULL;
     delete[] hacpz;
     hacpz = NULL;
-    delete[] hacpz;
-    hacpz = NULL;
+    delete[] zetaz;
+    zetaz = NULL;
 }
 
 void canopy::initialize()
 {
+    cumulativeLeafDragArea = new double[numNodes];
+    haz = new double[numNodes];
+    hacpz = new double[numNodes];
+    zetaz = new double[numNodes];
+
     compute_haz();
     compute_foliage_drag_area_index();
 }
@@ -129,9 +133,9 @@ void canopy::plot_haz()
     // psc - color postscript file
     // Or just comment out line to get a list of choices
     //plsdev("psc");
-    plsdev("svg"); //cairo uses the same color scheme as on screen - black on
+    plsdev("png"); //cairo uses the same color scheme as on screen - black on
     //red on black default
-    plsfnam("haz.svg");// sets the names of the output file
+    plsfnam("haz.png");// sets the names of the output file
 
     // Parse and process command line arguments.
     //pls->parseopts( &argc, argv, PL_PARSE_FULL ); // device and other options
@@ -151,7 +155,8 @@ void canopy::plot_haz()
     // Plot the data points - (num_points, x, y. plot_symbol)
     //  - plot_symbol=9 sets a circle with a dot in the
     // middle for the plot symbol - see "man plpoin"
-    pls->poin( numNodes, (PLFLT*) x,(PLFLT*) y, 9 );
+    //pls->poin( numNodes, (PLFLT*) x,(PLFLT*) y, 9 );
+    pls->line( numNodes, (PLFLT*) x,(PLFLT*) y);
 
     delete pls; // close plot
 
