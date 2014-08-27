@@ -21,11 +21,11 @@ public:
     ~canopy();
 
     void initialize();
-    void plot_haz();
+    void plot();
 
     //inputs
     double leafAreaIndex;
-    double h;                       //canopy height (m)
+    double h;                       //canopy height (m), if no canopy set to 1
     double z0g;                     //ground roughness length (m)
     double dragCoefAth;
     double heightMaxFoliageDist;    //height of maximum foliage distribution for the normal distribution (m)
@@ -36,7 +36,9 @@ public:
     double* haz;                    //nondimensional leaf area density
     double* hacpz;                  //nondimensional drag area density
     double* zetaz;                  //normalized mapped vertical coordinate
-    double zetah;                //this is hacpn at the top node
+    double  zetah;                  //this is hacpn at the top node
+    double  z0gh;                   //this is z0g/h
+    double cellsize;                //cellsize for integration, this is computed, NOT INPUT
 
 protected:
     double get_dragCoef(double zOverh);
@@ -44,7 +46,6 @@ protected:
     void compute_haz();
     void compute_foliage_drag_area_index();
 
-    double cellsize;                //cellsize for integration, this is computed, NOT INPUT
     double totalDragAreaIndex;
 };
 
