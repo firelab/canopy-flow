@@ -3,7 +3,7 @@
 canopy::canopy()
 {
     leafAreaIndex = 1.0;
-    h = 10.0;
+    canopyHeight = 10.0;
     z0g = 0.025;
     dragCoefAth = 0.2;
     heightMaxFoliageDist = 0.5;
@@ -21,7 +21,7 @@ canopy::canopy()
 canopy::canopy(canopy &rhs)
 {
     leafAreaIndex = rhs.leafAreaIndex;
-    h = rhs.h;
+    canopyHeight = rhs.canopyHeight;
     z0g = rhs.z0g;
     dragCoefAth = rhs.dragCoefAth;
     heightMaxFoliageDist = rhs.heightMaxFoliageDist;
@@ -46,7 +46,7 @@ canopy &canopy::operator=(const canopy &rhs)
     if(&rhs != this)
     {
         leafAreaIndex = rhs.leafAreaIndex;
-        h = rhs.h;
+        canopyHeight = rhs.canopyHeight;
         z0g = rhs.z0g;
         dragCoefAth = rhs.dragCoefAth;
         heightMaxFoliageDist = rhs.heightMaxFoliageDist;
@@ -85,7 +85,7 @@ void canopy::initialize()
     haz = new double[numNodes];
     hacpz = new double[numNodes];
     zetaz = new double[numNodes];
-    z0gh = z0g/h;
+    z0gh = z0g/canopyHeight;
     cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
 
     compute_haz();

@@ -24,18 +24,17 @@ public:
     ~canopyFlow();
 
     void plot();
+    void plotWind(double inputSpeed, double inputHeight);
 
     canopy C;
 
-    void computeWind();
+    void computeWind(); //Precomputes some necessary wind stuff, run before calling get_windspeed
+    double get_windspeed(double inputSpeed, double inputHeight, double desiredHeight);    //Computes windspeed for given input speed, input height, and desiredHeight (speed and height units must be same as inputs)
 
     double doh;     //non-dimensional canopy displacement height
     double z0oh;    //non-dimensional canopy roughness length
 
 protected:
-    double H;   //height above canopy top.
-    double UH;  //wind speed at H
-    double c2;
     double usuh;
     double* uzc;
     double* uzcs;
@@ -51,6 +50,7 @@ protected:
     double c3;
     double STRSC;    //adjustment factor to get the stress profile closer to observations of canopy Reynolds stresses
     double rough;   //correction factor for roughness sublayer
+    double logRough;    //precompute log of roughness to speed computations
 };
 
 #endif /* CANOPYFLOW_H_ */

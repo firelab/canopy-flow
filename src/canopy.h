@@ -25,7 +25,7 @@ public:
 
     //inputs
     double leafAreaIndex;
-    double h;                       //canopy height (m), if no canopy set to 1
+    double canopyHeight;            //canopy height (m), if no canopy set to 1
     double z0g;                     //ground roughness length (m)
     double dragCoefAth;
     double heightMaxFoliageDist;    //height of maximum foliage distribution for the normal distribution (m)
