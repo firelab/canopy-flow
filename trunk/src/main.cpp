@@ -13,12 +13,13 @@ int main() {
     wind.C.z0g = 0.025;                      //ground roughness length (m)
     wind.C.dragCoefAth = 0.2;
     wind.C.heightMaxFoliageDist = 0.5;     //height of maximum foliage distribution for the normal distribution (m)
-    wind.C.standardDevFoliageDist = 0.05;   //standard deviation of foliage distribution for the normal distribution (m)
+    wind.C.standardDevFoliageDist = 0.25;   //standard deviation of foliage distribution for the normal distribution (m)
     wind.C.numNodes = 10001;                 //number of cells to use for numerical integration
 
     wind.C.initialize();
     wind.computeWind();
 
+    //wind.C.plot();
     wind.plotWind(15.0, wind.C.canopyHeight + 5.0);
 
     std::cout << "Done!" << std::endl;

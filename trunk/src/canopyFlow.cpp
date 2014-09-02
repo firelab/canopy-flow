@@ -131,15 +131,33 @@ void canopyFlow::plotWind(double inputSpeed, double inputHeight)
     int cells = 10000;
     double cellsize = inputHeight/cells;
 
-    double* y = new double[cells];
+    double* z = new double[cells];
     for(int i=0; i<cells; i++)
-        y[i] = i*cellsize;
+        z[i] = i*cellsize;
 
-    double* x = new double[cells];
+    double* windSpeed = new double[cells];
     for(int i=0; i<cells; i++)
-        x[i] = get_windspeed(inputSpeed, inputHeight, i*cellsize);
+        windSpeed[i] = get_windspeed(inputSpeed, inputHeight, i*cellsize);
 
-    PLFLT xmin =0, ymin=0, xmax=x[cells-1], ymax=y[cells-1];
+    double* zCanopy = new double[C.numNodes];   //set up canopy density z axis
+    for(int i=0; i<C.numNodes; i++)
+        zCanopy[i] = i * C.cellsize * C.canopyHeight;
+
+    PLFLT xmin =0, ymin=0, xmax=windSpeed[cells-1], ymax=z[cells-1];
+
+    double maxHaz = C.haz[0];
+    for(int i=0; i<C.numNodes; i++)
+    {
+        if(C.haz[i]>maxHaz)
+            maxHaz = C.haz[i];
+    }
+
+    double maxWind = windSpeed[0];
+    for(int i=0; i<cells; i++)
+    {
+        if(windSpeed[i]>maxWind)
+            maxWind = windSpeed[i];
+    }
 
     PLINT just=0, axis=0;
     plstream *pls;
@@ -172,25 +190,64 @@ void canopyFlow::plotWind(double inputSpeed, double inputHeight)
     pls->init();           // start plplot object
     plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1) to be black (0,0,0)
     plcol0(1);              //now change our font color to be the color #1
-    pls->env(xmin, xmax, ymin, ymax, just, axis );
+
+    //pls->env(xmin, xmax, ymin, ymax, just, axis );
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    //pls->vsta();
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bnst", 0.0, 0, "bcnst", 0.0, 0 );
     //Setup window size
     // - just=0 sets axis so they scale indepedently
     // - axis=0 draw axis box, ticks, and numeric labels
     //   see "man plenv" for details
-    pls->lab( "wind speed", "height", "wind speed plot");
+
+    //pls->lab( "wind speed", "height", "wind speed plot");
 
     // Plot the data points - (num_points, x, y. plot_symbol)
     //  - plot_symbol=9 sets a circle with a dot in the
     // middle for the plot symbol - see "man plpoin"
     //pls->poin( numNodes, (PLFLT*) x,(PLFLT*) y, 9 );
-    pls->line( cells, (PLFLT*) x,(PLFLT*) y);
+
+    //plot fill area for canopy
+    double* xFill = new double[4];
+    double* yFill = new double[4];
+    xFill[0] = 0;
+    yFill[0] = 0;
+    xFill[1] = 0;
+    yFill[1] = C.canopyHeight;
+    xFill[2] = maxWind;
+    yFill[2] = C.canopyHeight;
+    xFill[3] = maxWind;
+    yFill[3] = 0;
+    pls->scol0a( 0, 0, 255, 0, 0.5);
+    pls->col0( 0 );
+    //plscol0(1, 0, 255, 0);    //first change the color pallet0 first color(#1)
+    //plcol0(1);              //now change our font color to be the color #1
+    pls->fill(4, xFill, yFill);
+
+    plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1)
+    plcol0(1);              //now change our font color to be the color #1
+    pls->line(cells, (PLFLT*) windSpeed,(PLFLT*) z);   //plot wind speed
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "Canopy Wind Flow" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "wind speed" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "height" );
+    //pls->wind(0.0, max, 0.0, zCanopy[C.numNodes-1]);  //reset window to haz coordinates
+    plscol0(1, 14, 143, 14);    //first change the color pallet0 first color(#1) to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+    pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
+    pls->box("cmstv", 0.0, 0, "", 0.0, 0);
+    pls->line(C.numNodes, (PLFLT*) C.haz,(PLFLT*) zCanopy);   //plot haz
+    pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimenstional leaf area density" );
 
     delete pls; // close plot
 
-    delete x;
-    x = NULL;
-    delete y;
-    y = NULL;
+    delete windSpeed;
+    windSpeed = NULL;
+    delete z;
+    z = NULL;
 }
 
 void canopyFlow::computeWind()
@@ -267,29 +324,19 @@ void canopyFlow::computeWind()
 
 double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double desiredHeight)
 {
-    int test;
-    double testUzc;
     double uCanopyHeight = K * inputSpeed / (usuh * (log((inputHeight/C.canopyHeight - doh) / z0oh) + logRough));
     //double uCanopyHeight = inputSpeed * log((1.0 - doh) / z0oh) / log((inputHeight/C.canopyHeight - doh) / z0oh);
-    printf("uCanopyHeight = %lf\n", uCanopyHeight);
     if(desiredHeight <= C.z0g)  //if below ground roughness height
     {
         return 0.0;
     }else if(desiredHeight < C.canopyHeight)  //below canopy
     {
-        test = (int)(desiredHeight/(C.canopyHeight*C.cellsize));
-        testUzc = uzc[(int)(desiredHeight/(C.canopyHeight*C.cellsize))];
-        if(test >= (C.numNodes - 2))
-                printf("test = %i\ttestUzc = %lf\twind speed = %lf\n", test, testUzc, uCanopyHeight * uzc[(int)(desiredHeight/(C.canopyHeight*C.cellsize))]);
         return uCanopyHeight * uzc[(int)(desiredHeight/(C.canopyHeight*C.cellsize))];
     }else if(desiredHeight == C.canopyHeight)   //exactly at canopy height
     {
-        printf("uCanopyHeight = %lf\n", uCanopyHeight);
         return uCanopyHeight;
     }else   //above canopy height
     {
-        if(desiredHeight <= C.canopyHeight + 0.1)
-                printf("desireHeight = %lf\t windspeed = %lf\n", desiredHeight, uCanopyHeight * usuh * log((desiredHeight/C.canopyHeight - doh) / z0oh) / K);
         //return uCanopyHeight * usuh * log((desiredHeight/C.canopyHeight - doh) / (z0oh + C.z0g/C.canopyHeight) / K;
         return uCanopyHeight * usuh * (log((desiredHeight/C.canopyHeight - doh) / z0oh) + logRough) / K;
     }
