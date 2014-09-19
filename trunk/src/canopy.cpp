@@ -6,8 +6,6 @@ canopy::canopy()
     canopyHeight = 10.0;
     z0g = 0.025;
     dragCoefAth = 0.2;
-    heightMaxFoliageDist = 0.5;
-    standardDevFoliageDist = 0.25;
     numNodes = 101;   //MUST BE ODD NUMBER
     cellsize = 0.0;    //cellsize here is normalized from 0 to 1
     cumulativeLeafDragArea = NULL;
@@ -20,23 +18,47 @@ canopy::canopy()
 
 canopy::canopy(canopy &rhs)
 {
+    distributionType = rhs.distributionType;
     leafAreaIndex = rhs.leafAreaIndex;
     canopyHeight = rhs.canopyHeight;
     z0g = rhs.z0g;
     dragCoefAth = rhs.dragCoefAth;
-    heightMaxFoliageDist = rhs.heightMaxFoliageDist;
-    standardDevFoliageDist = rhs.standardDevFoliageDist;
     numNodes = rhs.numNodes;
     cellsize = rhs.cellsize;
     totalDragAreaIndex = rhs.totalDragAreaIndex;
+
     if(rhs.cumulativeLeafDragArea)
+    {
+        cumulativeLeafDragArea = new double[numNodes];
         memcpy(cumulativeLeafDragArea, rhs.cumulativeLeafDragArea, sizeof(double) * numNodes);
+    }else{
+        cumulativeLeafDragArea = NULL;
+    }
+
     if(rhs.haz)
+    {
+        haz = new double[numNodes];
         memcpy(haz, rhs.haz, sizeof(double) * numNodes);
+    }else{
+        haz = NULL;
+    }
+
     if(rhs.hacpz)
+    {
+        hacpz = new double[numNodes];
         memcpy(hacpz, rhs.hacpz, sizeof(double) * numNodes);
+    }else{
+        hacpz = NULL;
+    }
+
     if(rhs.zetaz)
+    {
+        zetaz = new double[numNodes];
         memcpy(zetaz, rhs.zetaz, sizeof(double) * numNodes);
+    }else{
+        zetaz = NULL;
+    }
+
     zetah = rhs.zetah;
     z0gh = rhs.z0gh;
 }
@@ -45,23 +67,51 @@ canopy &canopy::operator=(const canopy &rhs)
 {
     if(&rhs != this)
     {
+        distributionType = rhs.distributionType;
         leafAreaIndex = rhs.leafAreaIndex;
         canopyHeight = rhs.canopyHeight;
         z0g = rhs.z0g;
         dragCoefAth = rhs.dragCoefAth;
-        heightMaxFoliageDist = rhs.heightMaxFoliageDist;
-        standardDevFoliageDist = rhs.standardDevFoliageDist;
         numNodes = rhs.numNodes;
         cellsize = rhs.cellsize;
         totalDragAreaIndex = rhs.totalDragAreaIndex;
+
         if(rhs.cumulativeLeafDragArea)
+        {
+            delete[] cumulativeLeafDragArea;
+            cumulativeLeafDragArea = new double[numNodes];
             memcpy(cumulativeLeafDragArea, rhs.cumulativeLeafDragArea, sizeof(double) * numNodes);
+        }else{
+            cumulativeLeafDragArea = NULL;
+        }
+
         if(rhs.haz)
+        {
+            delete[] haz;
+            haz = new double[numNodes];
             memcpy(haz, rhs.haz, sizeof(double) * numNodes);
+        }else{
+            haz = NULL;
+        }
+
         if(rhs.hacpz)
+        {
+            delete[] hacpz;
+            hacpz = new double[numNodes];
             memcpy(hacpz, rhs.hacpz, sizeof(double) * numNodes);
+        }else{
+            hacpz = NULL;
+        }
+
         if(rhs.zetaz)
+        {
+            delete[] zetaz;
+            zetaz = new double[numNodes];
             memcpy(zetaz, rhs.zetaz, sizeof(double) * numNodes);
+        }else{
+            zetaz = NULL;
+        }
+
         z0gh = rhs.z0gh;
     }
     return *this;
@@ -79,7 +129,7 @@ canopy::~canopy()
     zetaz = NULL;
 }
 
-void canopy::initialize()
+void canopy::initialize_memory()
 {
     cumulativeLeafDragArea = new double[numNodes];
     haz = new double[numNodes];
@@ -87,6 +137,11 @@ void canopy::initialize()
     zetaz = new double[numNodes];
     z0gh = z0g/canopyHeight;
     cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
+}
+
+void canopy::initialize()
+{
+    initialize_memory();
 
     compute_haz();
     compute_foliage_drag_area_index();
@@ -181,46 +236,6 @@ void canopy::plot()
     x = NULL;
     delete y;
     y = NULL;
-}
-
-void canopy::compute_haz()
-{
-    double norm;
-    double hazn;
-    double integHazn = 0.0;
-
-
-
-
-
-    //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //double intermediate = cellsize*2.0 / 3.0;
-    double intermediate = 2.0 / 3.0;
-    //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
-    for(int i=0; i<numNodes; i++)   //integrate using extened simpson's rule
-    {
-        norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageDist;
-        haz[i] = exp(-norm * norm); //temporarily store this here
-        if(i%2 == 0)    //if even numbers
-            integHazn += haz[i];
-        else            //if odd numbers
-            integHazn += 2.0 * haz[i];
-    }
-
-    integHazn = integHazn - 0.5 * (haz[0] + haz[numNodes-1]);
-    integHazn *= intermediate;
-
-    for(int i=0; i<numNodes; i++)
-        haz[i] = leafAreaIndex * haz[i] /integHazn;
 }
 
 double canopy::get_dragCoef(double zOverh)

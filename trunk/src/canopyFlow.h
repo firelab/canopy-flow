@@ -4,9 +4,12 @@
 
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
 //#include "boost/math/special_functions.hpp"
 #include <plstream.h>
 #include "canopy.h"
+#include "canopy_normal_distribution.h"
+#include "canopy_triangle_distribution.h"
 
 /*
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -26,7 +29,9 @@ public:
     void plot();
     void plotWind(double inputSpeed, double inputHeight);
 
-    canopy C;
+    void make_canopy(canopy::eCanopyType t);
+    void make_canopy(canopy* X);    //takes a pointer to a base class (but object is actually a derived) and makes a clone of the object (same type and data)
+    canopy* C;
 
     void computeWind(); //Precomputes some necessary wind stuff, run before calling get_windspeed
     double get_windspeed(double inputSpeed, double inputHeight, double desiredHeight);    //Computes windspeed for given input speed, input height, and desiredHeight (speed and height units must be same as inputs)
