@@ -71,7 +71,7 @@ void canopy_triangle_distribution::compute_haz()
         else if(zheight <= zmax)
             haz[i] = Ab + (zheight - zbot) * (Ax - Ab)/(zmax - zbot);   //temporarily store this here
         else
-            haz[i] = Ax - (zheight - zmax) * (A1 - Ax)/((numNodes-1)*cellsize - zmax);  //temporarily store this here
+            haz[i] = Ax - (zheight - zmax) * (Ax - A1)/((numNodes-1)*cellsize - zmax);  //temporarily store this here
 
         if(i%2 == 0)    //if even numbers
             integHazn += haz[i];
