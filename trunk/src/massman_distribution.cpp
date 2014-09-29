@@ -59,7 +59,7 @@ void massman_distribution::compute_haz()
 
     double A4 = A2 * (A3 + zmax) / (A1 - zmax);
 
-    for(int i=0; i<numNodes; i++)   //integrate using extened simpson's rule
+    for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
         zheight = i*cellsize;
         haz[i] = pow((A1 - zheight), A2) * pow((A3 + zheight), A4);    //temporarily store this here

@@ -273,7 +273,7 @@ void canopyFlow::plotWind(double inputSpeed, double inputHeight)
     pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
     pls->box("cmstv", 0.0, 0, "", 0.0, 0);
     pls->line(C->numNodes, (PLFLT*) C->haz,(PLFLT*) zCanopy);   //plot haz
-    pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimenstional leaf area density" );
+    pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimensional leaf area density" );
 
     delete pls; // close plot
 
@@ -291,7 +291,7 @@ void canopyFlow::make_canopy(canopy::eCanopyType t)
         C = new canopy_normal_distribution;
     else if(t == canopy::Massman)
         C = new canopy_normal_distribution;
-    else if(t == canopy::stepwise)
+    else if(t == canopy::measured)
         C = new canopy_normal_distribution;
     else
         throw std::logic_error("ERROR: Cannot determine canopy type in canopyFlow::make_canopy().\n");
@@ -306,7 +306,7 @@ void canopyFlow::make_canopy(canopy* X)
         C = new canopy_normal_distribution(*((canopy_normal_distribution*)X));
     else if(X->distributionType == canopy::Massman)
         C = new canopy_normal_distribution(*((canopy_normal_distribution*)X));
-    else if(X->distributionType == canopy::stepwise)
+    else if(X->distributionType == canopy::measured)
         C = new canopy_normal_distribution(*((canopy_normal_distribution*)X));
     else
         throw std::logic_error("ERROR: Cannot determine canopy type in canopyFlow::make_canopy().\n");

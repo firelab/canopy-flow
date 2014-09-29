@@ -50,7 +50,7 @@ void canopy_normal_distribution::compute_haz()
     //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    for(int i=0; i<numNodes; i++)   //integrate using extened simpson's rule
+    for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
         norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageDist;
         haz[i] = exp(-norm * norm); //temporarily store this here
