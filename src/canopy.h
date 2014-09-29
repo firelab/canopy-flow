@@ -4,6 +4,7 @@
 #include <math.h>
 #include <cstring>
 #include <plstream.h>
+#include <stdexcept>
 
 /*
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -27,7 +28,7 @@ public:
         normal_distribution,
         triangle,
         Massman,
-        stepwise
+        measured
     };
     eCanopyType distributionType;
 

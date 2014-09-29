@@ -63,7 +63,7 @@ void canopy_triangle_distribution::compute_haz()
     //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    for(int i=0; i<numNodes; i++)   //integrate using extened simpson's rule
+    for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
         zheight = i*cellsize;
         if(zheight <= zbot)
