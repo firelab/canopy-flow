@@ -10,6 +10,7 @@
 #include "canopy.h"
 #include "canopy_normal_distribution.h"
 #include "canopy_triangle_distribution.h"
+#include "massman_distribution.h"
 
 /*
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
