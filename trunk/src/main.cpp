@@ -7,18 +7,26 @@ int main() {
 
     canopyFlow wind;
 
-    //-------Normal Distribution------------------------
+    //-------Normal Distribution-----------------------
     //double heightMaxFoliageDist = 0.5;
     //double standardDevFoliageDist = 0.25;
     //wind.C = new canopy_normal_distribution(heightMaxFoliageDist, standardDevFoliageDist);
 
     //-------Triangle Distribution---------------------
-    double A1 = 0.0;       //density of top
-    double Ax = 3.0;          //density at max point
-    double Ab = 0.1;       //density of bottom (trunk space)
-    double zmax = 0.7;      //height to Ax (0 < zmax < 1)
-    double zbot = 0.3;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
-    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
+    //double A1 = 0.5;       //density of top
+    //double Ax = 3.0;          //density at max point
+    //double Ab = 0.1;       //density of bottom (trunk space)
+    //double zmax = 0.7;      //height to Ax (0 < zmax < 1)
+    //double zbot = 0.1;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
+    //wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
+
+    //-------Massman Distribution----------------------
+    double A1 = 1.10;
+    double A2 = 2.0;
+    double A3 = 1.0;
+    double zmax = 0.7;
+
+    wind.C = new massman_distribution(A1, A2, A3, zmax);
 
     //Set inputs
 

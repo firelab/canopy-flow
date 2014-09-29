@@ -58,6 +58,6 @@ FIND_PATH(PLPLOT_INCLUDES plstream.h /usr/include/plplot)
 
 INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
 
-ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp src/canopy.cpp src/canopy_normal_distribution.cpp src/canopy_triangle_distribution.cpp src/main.cpp)
+ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp src/canopy.cpp src/canopy_normal_distribution.cpp src/canopy_triangle_distribution.cpp src/massman_distribution.cpp src/main.cpp)
 TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
 
