@@ -17,15 +17,15 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Triangle Distribution---------------------
-    //double A1 = 0.5;       //density of top
-    //double Ax = 3.0;          //density at max point
-    //double Ab = 0.1;       //density of bottom (trunk space)
-    //double zmax = 0.7;      //height to Ax (0 < zmax < 1)
-    //double zbot = 0.1;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
-    //wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
-    //wind.C->leafAreaIndex = 1.0;
-    //wind.C->canopyHeight = 10.0;                        //canopy height (m)
-    //wind.C->dragCoefAth = 0.2;
+//    double A1 = 0.32;       //density of top
+//    double Ax = 1.0;          //density at max point
+//    double Ab = 0.02;       //density of bottom (trunk space)
+//    double zmax = 0.36;      //height to Ax (0 < zmax < 1)
+//    double zbot = 0.12;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
+//    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
+//    wind.C->leafAreaIndex = 3.28;
+//    wind.C->canopyHeight = 1.0;                        //canopy height (m)
+//    wind.C->dragCoefAth = 0.2;
 
     //-------Massman Distribution----------------------
     //double A1 = 1.10;
@@ -38,14 +38,31 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Measured Distribution---------------------
-    //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
-    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_canopy_distribution.txt");
+    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
+    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
+
+    //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Hardwood_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Hardwood_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Jack_Pine_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Jack_Pine_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Loblolly_Pine_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Loblolly_Pine_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_Wind.txt");
+
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_Wind.txt");
+
+
 
     //Set inputs
     wind.C->z0g = 0.025;                      //ground roughness length (m)
@@ -54,8 +71,12 @@ int main() {
     wind.C->initialize();
     wind.computeWind();
 
+    //std::cout << wind.get_windAdjustmentFactorShelteredMidFlame(6.096, 1.0) << std::endl;
+    //std::cout << wind.get_windAdjustmentFactorShelteredIntegral(6.096, 2.0) << std::endl;
+    //std::cout << wind.get_windAdjustmentFactorUnshelteredIntegral(6.096, 22.19) << std::endl;
+
     //wind.C->plot();
-    wind.plotWind(15.0, wind.C->canopyHeight + 5.0);
+    wind.plotDimensionalWind(1.0, wind.C->canopyHeight + 6.096);
 
     std::cout << "Done!" << std::endl;
     return 0;
