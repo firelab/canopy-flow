@@ -28,18 +28,25 @@ public:
     canopyFlow &operator=(const canopyFlow &rhs);
     ~canopyFlow();
 
+    void readData(std::string filename);
     void plot();
     void plotWind(double inputSpeed, double inputHeight);
+    void plotDimensionalWind(double inputSpeed, double inputHeight);
 
     void make_canopy(canopy::eCanopyType t);
     void make_canopy(canopy* X);    //takes a pointer to a base class (but object is actually a derived) and makes a clone of the object (same type and data)
     canopy* C;
 
     void computeWind(); //Precomputes some necessary wind stuff, run before calling get_windspeed
+    double get_windAdjustmentFactorShelteredMidFlame(double inputHeight, double midFlameHeight);
+    double get_windAdjustmentFactorShelteredIntegral(double inputHeight, double flameHeight);
+    double get_windAdjustmentFactorUnshelteredIntegral(double inputHeight, double flameHeight);
     double get_windspeed(double inputSpeed, double inputHeight, double desiredHeight);    //Computes windspeed for given input speed, input height, and desiredHeight (speed and height units must be same as inputs)
 
     double doh;     //non-dimensional canopy displacement height
     double z0oh;    //non-dimensional canopy roughness length
+    double Iz0;     //intermediate variable in canopy height wind calculation
+    double one_doh; // 1 - doh
 
 protected:
     double usuh;
@@ -58,6 +65,11 @@ protected:
     double STRSC;    //adjustment factor to get the stress profile closer to observations of canopy Reynolds stresses
     double rough;   //correction factor for roughness sublayer
     double logRough;    //precompute log of roughness to speed computations
+    bool measuredDataExists;
+    int n_measured;     //size of measured arrays
+    double* measuredHeight;
+    double* measuredSpeed;
+    double* measuredShear;
 };
 
 #endif /* CANOPYFLOW_H_ */
