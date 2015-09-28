@@ -42,11 +42,13 @@ public:
     double get_windAdjustmentFactorShelteredIntegral(double inputHeight, double flameHeight);
     double get_windAdjustmentFactorUnshelteredIntegral(double inputHeight, double flameHeight);
     double get_windspeed(double inputSpeed, double inputHeight, double desiredHeight);    //Computes windspeed for given input speed, input height, and desiredHeight (speed and height units must be same as inputs)
+    double get_uhuH(double inputSpeed, double inputHeight);
 
     double doh;     //non-dimensional canopy displacement height
     double z0oh;    //non-dimensional canopy roughness length
     double Iz0;     //intermediate variable in canopy height wind calculation
     double one_doh; // 1 - doh
+    std::string dataFile;
 
 protected:
     double usuh;
