@@ -161,6 +161,7 @@ void canopyFlow::readData(std::string filename)
 {
     measuredDataExists = true;
 
+    dataFile = filename;
     FILE* f = fopen(filename.c_str(), "r");
     if(f == NULL)
         throw std::runtime_error("Cannot open measured data file.\n");
@@ -469,7 +470,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 
         measured_windSpeed = new double[n_measured];
         for(int i=0; i<n_measured; i++)
-            measured_windSpeed[i] = measuredSpeed[i];
+            measured_windSpeed[i] = measuredSpeed[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);    //multiply by log() and uhuH to scale data to the input speed and direction
     }
 
 
@@ -589,7 +590,14 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 
     //pls->ssym(0.0, 2.5);
     if(measuredDataExists)
+    {
         pls->poin(n_measured, (PLFLT*) measured_windSpeed,(PLFLT*) measured_z, 22);   //plot measured wind speed
+
+
+        std::size_t found = dataFile.find_last_of("/\\");
+        pls->ptex( xmax, 0.7, 1.0, 0.0, 1, dataFile.substr(found+1).c_str());   //print out data filename on graph
+    }
+
 
     pls->schr(0, 1.6);  //change font size
     pls->mtex( "t", 4.0, 0.5, 0.5, "Canopy Wind Flow" );
@@ -805,19 +813,45 @@ double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double d
     //printf("uCanopyHeight = %lf\n", uCanopyHeight);
     //double uCanopyHeight = inputSpeed * log((1.0 - doh) / z0oh) / log((inputHeight/C->canopyHeight - doh) / z0oh);
     //double uhuH = log(Iz0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
-    double uhuH = 1.0 / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+    //double uhuH = 1.0 / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+
+
+
+
+
+//    double uhuH = 1.0 / log((inputHeight) / (z0oh * C->canopyHeight) + Iz0);
+//    if(desiredHeight <= C->z0g)  //if below ground roughness height
+//    {
+//        return 0.0;
+//    }else if(desiredHeight <= C->canopyHeight)  //below canopy
+//    {
+//        //return uCanopyHeight * uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize))];
+//        return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * inputSpeed * uhuH;
+//    }else   //above canopy height
+//    {
+//        //return uCanopyHeight * usuh * log((desiredHeight/C->canopyHeight - doh) / (z0oh + C->z0g/C->canopyHeight) / K;
+//        //return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+//        return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight) / (z0oh * C->canopyHeight) + Iz0);
+//    }
+
+
+
+    double uhuH = get_uhuH(inputSpeed, inputHeight);
     if(desiredHeight <= C->z0g)  //if below ground roughness height
     {
         return 0.0;
     }else if(desiredHeight <= C->canopyHeight)  //below canopy
     {
         //return uCanopyHeight * uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize))];
-        return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * inputSpeed * uhuH;
-    }else
-    {   //above canopy height
-        //return uCanopyHeight * usuh * log((desiredHeight/C->canopyHeight - doh) / (z0oh + C->z0g/C->canopyHeight) / K;
-        return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+        return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * log(Iz0) * uhuH;
+    }else   //above canopy height
+    {
+        //return XXXXXX ;
+        return uhuH * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
     }
 }
 
-
+double canopyFlow::get_uhuH(double inputSpeed, double inputHeight)
+{
+    return inputSpeed / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+}

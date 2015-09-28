@@ -76,7 +76,8 @@ int main() {
     //std::cout << wind.get_windAdjustmentFactorUnshelteredIntegral(6.096, 22.19) << std::endl;
 
     //wind.C->plot();
-    wind.plotDimensionalWind(1.0, wind.C->canopyHeight + 6.096);
+    wind.plotDimensionalWind(10.0, wind.C->canopyHeight + 6.096);
+    //wind.plotDimensionalWind(10.0, 6.096);
 
     std::cout << "Done!" << std::endl;
     return 0;
