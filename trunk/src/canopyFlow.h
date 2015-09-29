@@ -32,6 +32,7 @@ public:
     void plot();
     void plotWind(double inputSpeed, double inputHeight);
     void plotDimensionalWind(double inputSpeed, double inputHeight);
+    void plotWAFvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType);
 
     void make_canopy(canopy::eCanopyType t);
     void make_canopy(canopy* X);    //takes a pointer to a base class (but object is actually a derived) and makes a clone of the object (same type and data)

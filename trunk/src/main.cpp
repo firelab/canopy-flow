@@ -17,15 +17,15 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Triangle Distribution---------------------
-//    double A1 = 0.32;       //density of top
-//    double Ax = 1.0;          //density at max point
-//    double Ab = 0.02;       //density of bottom (trunk space)
-//    double zmax = 0.36;      //height to Ax (0 < zmax < 1)
-//    double zbot = 0.12;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
-//    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
-//    wind.C->leafAreaIndex = 3.28;
-//    wind.C->canopyHeight = 1.0;                        //canopy height (m)
-//    wind.C->dragCoefAth = 0.2;
+    double A1 = 0.32;       //density of top
+    double Ax = 1.0;          //density at max point
+    double Ab = 0.02;       //density of bottom (trunk space)
+    double zmax = 0.36;      //height to Ax (0 < zmax < 1)
+    double zbot = 0.12;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
+    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
+    wind.C->leafAreaIndex = 3.28;
+    wind.C->canopyHeight = 10.0;                        //canopy height (m)
+    wind.C->dragCoefAth = 0.2;
 
     //-------Massman Distribution----------------------
     //double A1 = 1.10;
@@ -38,8 +38,8 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Measured Distribution---------------------
-    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
-    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
+    //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
+    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
 
     //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_canopy_distribution.txt");
     //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_Wind.txt");
@@ -75,9 +75,15 @@ int main() {
     //std::cout << wind.get_windAdjustmentFactorShelteredIntegral(6.096, 2.0) << std::endl;
     //std::cout << wind.get_windAdjustmentFactorUnshelteredIntegral(6.096, 22.19) << std::endl;
 
-    //wind.C->plot();
-    wind.plotDimensionalWind(10.0, wind.C->canopyHeight + 6.096);
-    //wind.plotDimensionalWind(10.0, 6.096);
+    double inputHeight = wind.C->canopyHeight + 6.096;
+    double midFlameHeight = 3.0;
+    double inputSpeed = 10.0;
+    double lowLAI = 0.001;
+    double highLAI = 10.0;
+    int profileType = 0;    //  0 => shelteredMidFlame;  1 => shelteredIntegral;  2 =>unshelteredIntegral;
+
+    wind.plotDimensionalWind(inputSpeed, inputHeight);
+    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
 
     std::cout << "Done!" << std::endl;
     return 0;

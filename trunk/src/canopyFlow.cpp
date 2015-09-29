@@ -620,6 +620,75 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     z = NULL;
 }
 
+void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+{
+    int plotNodes = 1000;
+    double* cdLAI = new double[plotNodes];
+    double* WAFarray = new double[plotNodes];
+
+    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+
+    for(int i=0; i<plotNodes; i++){
+        C->leafAreaIndex = (i+1)*LAIStepSize;
+        cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
+        C->initialize();
+        computeWind();
+        if(profileType == 0)    //sheltered, mid-flame method
+        {
+            WAFarray[i] = get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+        }else if(profileType == 1)  //sheltered, integral method
+        {
+            WAFarray[i] = get_windAdjustmentFactorShelteredIntegral(inputHeight, 2.0 * midFlameHeight);
+        }else if(profileType == 2)  //unsheltered, integral method
+        {
+            WAFarray[i] = get_windAdjustmentFactorUnshelteredIntegral(inputHeight, 2.0 * midFlameHeight);
+        }else
+            printf("\n\nError determining profileType\n");
+    }
+
+    PLFLT xmin = cdLAI[0], ymin = 0.0, xmax = cdLAI[plotNodes-1], ymax = 1.0;
+
+    PLINT just=0, axis=0;
+    plstream *pls;
+
+    // plplot initialization
+
+    pls = new plstream();  // declare plplot object
+
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    //red on black default
+    plsfnam("WAF.pdf");// sets the names of the output file
+
+    plscolbg(255,255,255);  //change background color
+
+    pls->init();           // start plplot object
+    plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1) to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bcnst", 0.0, 0, "bcnst", 0.0, 0 );
+    //Setup window size
+    // - just=0 sets axis so they scale indepedently
+    // - axis=0 draw axis box, ticks, and numeric labels
+
+    pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) WAFarray);   //plot WAF
+
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "Wind Adjustment Factor" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "Cd*LAI" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "WAF" );
+
+    delete pls; // close plot
+
+    delete cdLAI;
+    cdLAI = NULL;
+    delete WAFarray;
+    WAFarray = NULL;
+}
+
 void canopyFlow::make_canopy(canopy::eCanopyType t)
 {
     if(t == canopy::normal_distribution)
