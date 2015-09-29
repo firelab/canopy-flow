@@ -131,11 +131,16 @@ canopy::~canopy()
 
 void canopy::initialize_memory()
 {
-    cumulativeLeafDragArea = new double[numNodes];
-    haz = new double[numNodes];
-    hacpz = new double[numNodes];
-    zetaz = new double[numNodes];
-    z0gh = z0g/canopyHeight;
+    if(!cumulativeLeafDragArea)
+        cumulativeLeafDragArea = new double[numNodes];
+    if(!haz)
+        haz = new double[numNodes];
+    if(!hacpz)
+        hacpz = new double[numNodes];
+    if(!zetaz)
+        zetaz = new double[numNodes];
+    if(!z0gh)
+        z0gh = z0g/canopyHeight;
     cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
 }
 
