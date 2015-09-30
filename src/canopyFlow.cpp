@@ -461,6 +461,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 {
 
     double* measured_windSpeed;
+    double* measured_shear;
     double* measured_z;
     if(measuredDataExists)
     {
@@ -471,6 +472,9 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
         measured_windSpeed = new double[n_measured];
         for(int i=0; i<n_measured; i++)
             measured_windSpeed[i] = measuredSpeed[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);    //multiply by log() and uhuH to scale data to the input speed and direction
+        measured_shear = new double[n_measured];
+        for(int i=0; i<n_measured; i++)
+            measured_shear[i] = measuredShear[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);    //multiply by log() and uhuH to scale data to the input speed and direction
     }
 
 
@@ -493,6 +497,10 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 //        if(i>16090)
 //            printf("i=%d\twind=%lf\n", i, windSpeed[i]);
     }
+
+    double* windShear = new double[C->numNodes];
+    for(int i=0; i<C->numNodes; i++)
+        windShear[i] = uzcs[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);
 
     double* zCanopy = new double[C->numNodes];   //set up canopy density z axis
     for(int i=0; i<C->numNodes; i++)
@@ -584,15 +592,19 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1)
     plcol0(1);              //now change our font color to be the color #1
     pls->line(plotNodes, (PLFLT*) windSpeed,(PLFLT*) z);   //plot wind speed
-    plscol0(2, 1, 0, 0);    //first change the color pallet0 first color(#1) to be black (0,0,0)
-    plcol0(2);              //now change our font color to be the color #1
-    pls->line(C->numNodes, (PLFLT*) uzcs,(PLFLT*) z);   //plot ustar^2
+    plscol0(2, 255, 0, 0);    //first change the color pallet0 color#2 to be red
+    plcol0(2);              //now change our font color to be the color #2
+    pls->line(C->numNodes, (PLFLT*) windShear,(PLFLT*) z);   //plot ustar^2
+    plcol0(1);              //now change our font color to be the color #1
 
     //pls->ssym(0.0, 2.5);
     if(measuredDataExists)
     {
         pls->poin(n_measured, (PLFLT*) measured_windSpeed,(PLFLT*) measured_z, 22);   //plot measured wind speed
 
+        plcol0(2);              //now change our font color to be the color #2
+        pls->poin(n_measured, (PLFLT*) measured_shear,(PLFLT*) measured_z, 22);   //plot measured shear (ustar^2?)
+        plcol0(1);              //now change our font color to be the color #1
 
         std::size_t found = dataFile.find_last_of("/\\");
         pls->ptex( xmax, 0.7, 1.0, 0.0, 1, dataFile.substr(found+1).c_str());   //print out data filename on graph
@@ -614,10 +626,28 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 
     delete pls; // close plot
 
+
+    if(measuredDataExists)
+    {
+        delete measured_windSpeed;
+        measured_windSpeed = NULL;
+        delete measured_shear;
+        measured_shear = NULL;
+        delete measured_z;
+        measured_z = NULL;
+    }
     delete windSpeed;
     windSpeed = NULL;
+    delete windShear;
+    windShear = NULL;
+    delete zCanopy;
+    zCanopy = NULL;
     delete z;
     z = NULL;
+    delete xFill;
+    xFill = NULL;
+    delete yFill;
+    yFill = NULL;
 }
 
 void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
@@ -629,8 +659,9 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     double LAIStepSize = (highLAI-lowLAI) / plotNodes;
 
     for(int i=0; i<plotNodes; i++){
-        C->leafAreaIndex = (i+1)*LAIStepSize;
+        C->leafAreaIndex = lowLAI + i * LAIStepSize;
         cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
+        cdLAI[i] = log10(cdLAI[i]);
         C->initialize();
         computeWind();
         if(profileType == 0)    //sheltered, mid-flame method
@@ -668,7 +699,7 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     pls->adv( 0 );
     pls->vpor( 0.15, 0.85, 0.1, 0.8 );
     pls->wind( xmin, xmax, ymin, ymax);
-    pls->box( "bcnst", 0.0, 0, "bcnst", 0.0, 0 );
+    pls->box( "bcnstl", 0.0, 0, "bcnst", 0.0, 0 );
     //Setup window size
     // - just=0 sets axis so they scale indepedently
     // - axis=0 draw axis box, ticks, and numeric labels
