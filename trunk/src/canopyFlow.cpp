@@ -654,7 +654,8 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
 {
     int plotNodes = 1000;
     double* cdLAI = new double[plotNodes];
-    double* WAFarray = new double[plotNodes];
+    double* WAFarrayMidFlame = new double[plotNodes];
+    double* WAFarrayIntegral = new double[plotNodes];
 
     double LAIStepSize = (highLAI-lowLAI) / plotNodes;
 
@@ -664,15 +665,14 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
         cdLAI[i] = log10(cdLAI[i]);
         C->initialize();
         computeWind();
-        if(profileType == 0)    //sheltered, mid-flame method
+        if(profileType == 0)    //sheltered
         {
-            WAFarray[i] = get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
-        }else if(profileType == 1)  //sheltered, integral method
+            WAFarrayMidFlame[i] = get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+            WAFarrayIntegral[i] = get_windAdjustmentFactorShelteredIntegral(inputHeight, 2.0 * midFlameHeight);
+
+        }else if(profileType == 1)  //unsheltered
         {
-            WAFarray[i] = get_windAdjustmentFactorShelteredIntegral(inputHeight, 2.0 * midFlameHeight);
-        }else if(profileType == 2)  //unsheltered, integral method
-        {
-            WAFarray[i] = get_windAdjustmentFactorUnshelteredIntegral(inputHeight, 2.0 * midFlameHeight);
+            WAFarrayIntegral[i] = get_windAdjustmentFactorUnshelteredIntegral(inputHeight, 2.0 * midFlameHeight);
         }else
             printf("\n\nError determining profileType\n");
     }
@@ -693,18 +693,28 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     plscolbg(255,255,255);  //change background color
 
     pls->init();           // start plplot object
-    plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1) to be black (0,0,0)
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
+    plscol0(2, 255, 0, 0);      //change the color pallet0 color #2 to be red (255,0,0)
+    plscol0(3, 255, 255, 255);  //change the color pallet0 color #3 to be white (255,255,255)
     plcol0(1);              //now change our font color to be the color #1
 
     pls->adv( 0 );
     pls->vpor( 0.15, 0.85, 0.1, 0.8 );
     pls->wind( xmin, xmax, ymin, ymax);
     pls->box( "bcnstl", 0.0, 0, "bcnst", 0.0, 0 );
-    //Setup window size
-    // - just=0 sets axis so they scale indepedently
-    // - axis=0 draw axis box, ticks, and numeric labels
 
-    pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) WAFarray);   //plot WAF
+    if(profileType == 0)    //sheltered
+    {
+        pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) WAFarrayIntegral);   //plot WAF integral method
+        plcol0(2);              //now change our font color to be the color #2
+        pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) WAFarrayMidFlame);   //plot WAF midflame method
+        plcol0(1);              //now change our font color to be the color #1
+    }else if(profileType == 1)  //unsheltered
+    {
+        pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) WAFarrayIntegral);   //plot WAF integral method
+    }else
+        printf("\n\nError determining profileType\n");
+
 
     pls->schr(0, 1.6);  //change font size
     pls->mtex( "t", 4.0, 0.5, 0.5, "Wind Adjustment Factor" );
@@ -712,12 +722,63 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     pls->mtex( "b", 3.0, 0.5, 0.5, "Cd*LAI" );
     pls->mtex( "l", 3.0, 0.5, 0.5, "WAF" );
 
+
+
+    // Draw a legend
+    PLINT        nlegend = 2;
+    const char   *text[2], *symbols[2];
+    PLINT        opt_array[2];
+    PLINT        text_colors[2];
+    PLINT        line_colors[2];
+    PLINT        line_styles[2];
+    PLFLT        line_widths[2];
+    PLINT        symbol_numbers[2], symbol_colors[2];
+    PLFLT        symbol_scales[2];
+    PLFLT        legend_width, legend_height;
+
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    text[0]        = "integral method";
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1.;
+    symbols[0] = "";
+
+    // Second legend entry.
+    opt_array[1]      = PL_LEGEND_LINE;
+    text_colors[1]    = 1;
+    text[1]           = "midflame method";
+    line_colors[1]    = 1;
+    line_styles[1]    = 1;
+    line_widths[1]    = 1.;
+    //symbol_colors[1]  = 3;
+    //symbol_scales[1]  = 1.;
+    //symbol_numbers[1] = 4;
+    symbols[1]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    plscol0a( 15, 32, 32, 32, 0.70 );
+    pls->legend(&legend_width, &legend_height,
+                PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
+                0.03, 0.03, 0.1, 3,
+                1, 1, 1, 1,
+                nlegend, opt_array,
+                1.0, 1.0, 2.0,
+                1., text_colors, (const char **) text,
+                NULL, NULL, NULL, NULL,
+                line_colors, line_styles, line_widths,
+                symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
+
     delete pls; // close plot
 
     delete cdLAI;
     cdLAI = NULL;
-    delete WAFarray;
-    WAFarray = NULL;
+    delete WAFarrayMidFlame;
+    WAFarrayMidFlame = NULL;
+    delete WAFarrayIntegral;
+    WAFarrayIntegral = NULL;
 }
 
 void canopyFlow::make_canopy(canopy::eCanopyType t)
@@ -942,11 +1003,9 @@ double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double d
         return 0.0;
     }else if(desiredHeight <= C->canopyHeight)  //below canopy
     {
-        //return uCanopyHeight * uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize))];
         return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * log(Iz0) * uhuH;
     }else   //above canopy height
     {
-        //return XXXXXX ;
         return uhuH * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
     }
 }

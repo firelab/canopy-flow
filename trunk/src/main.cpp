@@ -80,7 +80,7 @@ int main() {
     double inputSpeed = 10.0;
     double lowLAI = 0.001;
     double highLAI = 10.0;
-    int profileType = 0;    //  0 => shelteredMidFlame;  1 => shelteredIntegral;  2 =>unshelteredIntegral;
+    int profileType = 0;    //  0 => sheltered;  1 => unsheltered;
 
     wind.plotDimensionalWind(inputSpeed, inputHeight);
     wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
