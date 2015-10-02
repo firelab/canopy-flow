@@ -38,8 +38,8 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Measured Distribution---------------------
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
+    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
+    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
 
 //    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_canopy_distribution.txt");
 //    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_Wind.txt");
@@ -56,11 +56,11 @@ int main() {
 //    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_canopy_distribution.txt");
 //    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_Wind.txt");
 
-    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_canopy_distribution.txt");
-    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_Wind.txt");
+//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_canopy_distribution.txt");
+//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_Wind.txt");
 
-    //wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_canopy_distribution.txt");
-    //wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_Wind.txt");
+//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_canopy_distribution.txt");
+//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_Wind.txt");
 
 
 
@@ -83,7 +83,11 @@ int main() {
     int profileType = 0;    //  0 => sheltered;  1 => unsheltered;
 
     wind.plotDimensionalWind(inputSpeed, inputHeight);
-    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    //wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    //wind.plotz0ohvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    //wind.plotdohvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    //wind.plotz0ohvsone_doh(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    //wind.plotz0ohvsdoh(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
 
     std::cout << "Done!" << std::endl;
     return 0;

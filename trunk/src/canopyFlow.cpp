@@ -474,9 +474,8 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
             measured_windSpeed[i] = measuredSpeed[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);    //multiply by log() and uhuH to scale data to the input speed and direction
         measured_shear = new double[n_measured];
         for(int i=0; i<n_measured; i++)
-            measured_shear[i] = measuredShear[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);    //multiply by log() and uhuH to scale data to the input speed and direction
+            measured_shear[i] = measuredShear[i] * inputSpeed;    //multiply by log() and uhuH to scale data to the input speed and direction
     }
-
 
 
     int plotNodes = C->numNodes + (inputHeight - C->canopyHeight) / (C->cellsize * C->canopyHeight);
@@ -500,7 +499,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 
     double* windShear = new double[C->numNodes];
     for(int i=0; i<C->numNodes; i++)
-        windShear[i] = uzcs[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);
+        windShear[i] = uzcs[i] * inputSpeed;
 
     double* zCanopy = new double[C->numNodes];   //set up canopy density z axis
     for(int i=0; i<C->numNodes; i++)
@@ -583,30 +582,29 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     yFill[2] = C->canopyHeight;
     xFill[3] = maxWind;
     yFill[3] = 0;
-    pls->scol0a( 0, 0, 255, 0, 0.5);
-    pls->col0( 0 );
+    pls->scol0a( 4, 0, 255, 0, 0.5);
+    pls->col0( 4 );
     //plscol0(1, 0, 255, 0);    //first change the color pallet0 first color(#1)
     //plcol0(1);              //now change our font color to be the color #1
     pls->fill(4, xFill, yFill);
 
-    plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1)
     plcol0(1);              //now change our font color to be the color #1
     pls->line(plotNodes, (PLFLT*) windSpeed,(PLFLT*) z);   //plot wind speed
-    plscol0(2, 255, 0, 0);    //first change the color pallet0 color#2 to be red
+    plscol0(2, 255, 0, 0);    //change the color pallet0 color#2 to be red
     plcol0(2);              //now change our font color to be the color #2
     pls->line(C->numNodes, (PLFLT*) windShear,(PLFLT*) z);   //plot ustar^2
-    plcol0(1);              //now change our font color to be the color #1
 
     //pls->ssym(0.0, 2.5);
     if(measuredDataExists)
     {
+        plcol0(1);              //now change our font color to be the color #1
         pls->poin(n_measured, (PLFLT*) measured_windSpeed,(PLFLT*) measured_z, 22);   //plot measured wind speed
 
         plcol0(2);              //now change our font color to be the color #2
         pls->poin(n_measured, (PLFLT*) measured_shear,(PLFLT*) measured_z, 22);   //plot measured shear (ustar^2?)
-        plcol0(1);              //now change our font color to be the color #1
 
         std::size_t found = dataFile.find_last_of("/\\");
+        plcol0(1);              //now change our font color to be the color #1
         pls->ptex( xmax, 0.7, 1.0, 0.0, 1, dataFile.substr(found+1).c_str());   //print out data filename on graph
     }
 
@@ -617,12 +615,73 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     pls->mtex( "b", 3.0, 0.5, 0.5, "wind speed" );
     pls->mtex( "l", 3.0, 0.5, 0.5, "height" );
     //pls->wind(0.0, max, 0.0, zCanopy[C->numNodes-1]);  //reset window to haz coordinates
-    plscol0(1, 14, 143, 14);    //first change the color pallet0 first color(#1) to be black (0,0,0)
-    plcol0(1);              //now change our font color to be the color #1
+    plscol0(3, 14, 143, 14);    //change the color pallet0 color(#3) to be dark green (14,143,14)
+    plcol0(3);              //now change our font color to be the color #3
     pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
     pls->box("cmstv", 0.0, 0, "", 0.0, 0);
     pls->line(C->numNodes, (PLFLT*) C->haz,(PLFLT*) zCanopy);   //plot haz
     pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimensional leaf area density" );
+
+    plcol0(0);
+
+    // Draw a legend
+    PLINT        nlegend = 3;
+    const char   *text[3], *symbols[3];
+    PLINT        opt_array[3];
+    PLINT        text_colors[3];
+    PLINT        line_colors[3];
+    PLINT        line_styles[3];
+    PLFLT        line_widths[3];
+    PLINT        symbol_numbers[3], symbol_colors[3];
+    PLFLT        symbol_scales[3];
+    PLFLT        legend_width, legend_height;
+
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 1;
+    text[0]        = "wind speed";
+    line_colors[0] = 1;
+    line_styles[0] = 1;
+    line_widths[0] = 1.;
+    symbols[0] = "";
+
+    // Second legend entry.
+    opt_array[1]      = PL_LEGEND_LINE;
+    text_colors[1]    = 2;
+    text[1]           = "reynold's stress";
+    line_colors[1]    = 2;
+    line_styles[1]    = 1;
+    line_widths[1]    = 1.;
+    //symbol_colors[1]  = 3;
+    //symbol_scales[1]  = 1.;
+    //symbol_numbers[1] = 4;
+    symbols[1]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    // Third legend entry.
+    opt_array[2]   = PL_LEGEND_LINE;
+    text_colors[2] = 3;
+    text[2]        = "leaf area density";
+    line_colors[2] = 3;
+    line_styles[2] = 1;
+    line_widths[2] = 1.;
+    symbols[2] = "";
+
+    //plscol0a( 15, 32, 32, 32, 0.70 );
+
+
+
+    pls->legend(&legend_width, &legend_height,
+                PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, PL_POSITION_LEFT | PL_POSITION_TOP,
+                0.03, 0.03, 0.1, 0,
+                1, 1, 1, 1,
+                nlegend, opt_array,
+                1.0, 1.0, 2.0,
+                1., text_colors, (const char **) text,
+                NULL, NULL, NULL, NULL,
+                line_colors, line_styles, line_widths,
+                symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     delete pls; // close plot
 
@@ -738,18 +797,18 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
 
     // First legend entry.
     opt_array[0]   = PL_LEGEND_LINE;
-    text_colors[0] = 2;
+    text_colors[0] = 1;
     text[0]        = "integral method";
-    line_colors[0] = 2;
+    line_colors[0] = 1;
     line_styles[0] = 1;
     line_widths[0] = 1.;
     symbols[0] = "";
 
     // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE;
-    text_colors[1]    = 1;
+    text_colors[1]    = 2;
     text[1]           = "midflame method";
-    line_colors[1]    = 1;
+    line_colors[1]    = 2;
     line_styles[1]    = 1;
     line_widths[1]    = 1.;
     //symbol_colors[1]  = 3;
@@ -760,6 +819,37 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     // to do with boxes.
 
     plscol0a( 15, 32, 32, 32, 0.70 );
+
+    if(profileType == 0)    //sheltered
+    {
+        pls->legend(&legend_width, &legend_height,
+                    PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
+                    0.03, 0.03, 0.1, 3,
+                    1, 1, 1, 1,
+                    nlegend, opt_array,
+                    1.0, 1.0, 2.0,
+                    1., text_colors, (const char **) text,
+                    NULL, NULL, NULL, NULL,
+                    line_colors, line_styles, line_widths,
+                    symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
+
+    }else if(profileType == 1)  //unsheltered
+    {
+        nlegend = nlegend-1;
+        pls->legend(&legend_width, &legend_height,
+                    PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
+                    0.03, 0.03, 0.1, 3,
+                    1, 1, 1, 1,
+                    nlegend, opt_array,
+                    1.0, 1.0, 2.0,
+                    1., text_colors, (const char **) text,
+                    NULL, NULL, NULL, NULL,
+                    line_colors, line_styles, line_widths,
+                    symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
+
+    }else
+        printf("\n\nError determining profileType\n");
+
     pls->legend(&legend_width, &legend_height,
                 PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,
                 0.03, 0.03, 0.1, 3,
@@ -779,6 +869,292 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     WAFarrayMidFlame = NULL;
     delete WAFarrayIntegral;
     WAFarrayIntegral = NULL;
+}
+
+void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+{
+    int plotNodes = 1000;
+    double* cdLAI = new double[plotNodes];
+    double* z0ohArray = new double[plotNodes];
+
+    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+
+    for(int i=0; i<plotNodes; i++){
+        C->leafAreaIndex = lowLAI + i * LAIStepSize;
+        cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
+        cdLAI[i] = log10(cdLAI[i]);
+        C->initialize();
+        computeWind();
+        z0ohArray[i] = z0oh;
+    }
+
+    double max_z0oh = 0.0;
+    double min_z0oh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(z0ohArray[i] > max_z0oh)
+            max_z0oh = z0ohArray[i];
+        if(z0ohArray[i] < min_z0oh)
+            min_z0oh = z0ohArray[i];
+    }
+
+    PLFLT xmin = cdLAI[0], ymin = min_z0oh, xmax = cdLAI[plotNodes-1], ymax = max_z0oh;
+
+    PLINT just=0, axis=0;
+    plstream *pls;
+
+    // plplot initialization
+
+    pls = new plstream();  // declare plplot object
+
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    //red on black default
+    plsfnam("z0oh.pdf");// sets the names of the output file
+
+    plscolbg(255,255,255);  //change background color
+
+    pls->init();           // start plplot object
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bcnstl", 0.0, 0, "bcnst", 0.0, 0 );
+
+    pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) z0ohArray);   //plot line
+
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "z0oh" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "Cd*LAI" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "z0oh" );
+
+    delete pls; // close plot
+
+    delete cdLAI;
+    cdLAI = NULL;
+    delete z0ohArray;
+    z0ohArray = NULL;
+}
+
+void canopyFlow::plotdohvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+{
+    int plotNodes = 1000;
+    double* cdLAI = new double[plotNodes];
+    double* dohArray = new double[plotNodes];
+
+    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+
+    for(int i=0; i<plotNodes; i++){
+        C->leafAreaIndex = lowLAI + i * LAIStepSize;
+        cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
+        cdLAI[i] = log10(cdLAI[i]);
+        C->initialize();
+        computeWind();
+        dohArray[i] = doh;
+    }
+
+    double max_doh = 0.0;
+    double min_doh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(dohArray[i] > max_doh)
+            max_doh = dohArray[i];
+        if(dohArray[i] < min_doh)
+            min_doh = dohArray[i];
+    }
+
+    PLFLT xmin = cdLAI[0], ymin = min_doh, xmax = cdLAI[plotNodes-1], ymax = max_doh;
+
+    PLINT just=0, axis=0;
+    plstream *pls;
+
+    // plplot initialization
+
+    pls = new plstream();  // declare plplot object
+
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    //red on black default
+    plsfnam("doh.pdf");// sets the names of the output file
+
+    plscolbg(255,255,255);  //change background color
+
+    pls->init();           // start plplot object
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bcnstl", 0.0, 0, "bcnst", 0.0, 0 );
+
+    pls->line(plotNodes, (PLFLT*) cdLAI,(PLFLT*) dohArray);   //plot line
+
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "doh" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "Cd*LAI" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "doh" );
+
+    delete pls; // close plot
+
+    delete cdLAI;
+    cdLAI = NULL;
+    delete dohArray;
+    dohArray = NULL;
+}
+
+void canopyFlow::plotz0ohvsone_doh(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+{
+    int plotNodes = 1000;
+    double* z0ohArray = new double[plotNodes];
+    double* one_dohArray = new double[plotNodes];
+
+    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+
+    for(int i=0; i<plotNodes; i++){
+        C->leafAreaIndex = lowLAI + i * LAIStepSize;
+        C->initialize();
+        computeWind();
+        z0ohArray[i] = z0oh;
+        one_dohArray[i] = one_doh;
+    }
+
+    double max_z0oh = 0.0;
+    double min_z0oh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(z0ohArray[i] > max_z0oh)
+            max_z0oh = z0ohArray[i];
+        if(z0ohArray[i] < min_z0oh)
+            min_z0oh = z0ohArray[i];
+    }
+
+    double max_one_doh = 0.0;
+    double min_one_doh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(one_dohArray[i] > max_one_doh)
+            max_one_doh = one_dohArray[i];
+        if(one_dohArray[i] < min_one_doh)
+            min_one_doh = one_dohArray[i];
+    }
+
+    PLFLT xmin = min_one_doh, ymin = min_z0oh, xmax = max_one_doh, ymax = max_z0oh;
+
+    PLINT just=0, axis=0;
+    plstream *pls;
+
+    // plplot initialization
+
+    pls = new plstream();  // declare plplot object
+
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    //red on black default
+    plsfnam("z0oh_vs_one_doh.pdf");// sets the names of the output file
+
+    plscolbg(255,255,255);  //change background color
+
+    pls->init();           // start plplot object
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bcnst", 0.0, 0, "bcnst", 0.0, 0 );
+
+    pls->line(plotNodes, (PLFLT*) one_dohArray,(PLFLT*) z0ohArray);   //plot line
+
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "z0oh_vs_one_doh" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "one_doh" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "z0oh" );
+
+    delete pls; // close plot
+
+    delete z0ohArray;
+    z0ohArray = NULL;
+    delete one_dohArray;
+    one_dohArray = NULL;
+}
+
+void canopyFlow::plotz0ohvsdoh(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+{
+    int plotNodes = 1000;
+    double* z0ohArray = new double[plotNodes];
+    double* dohArray = new double[plotNodes];
+
+    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+
+    for(int i=0; i<plotNodes; i++){
+        C->leafAreaIndex = lowLAI + i * LAIStepSize;
+        C->initialize();
+        computeWind();
+        z0ohArray[i] = z0oh;
+        dohArray[i] = doh;
+    }
+
+    double max_z0oh = 0.0;
+    double min_z0oh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(z0ohArray[i] > max_z0oh)
+            max_z0oh = z0ohArray[i];
+        if(z0ohArray[i] < min_z0oh)
+            min_z0oh = z0ohArray[i];
+    }
+
+    double max_doh = 0.0;
+    double min_doh = 10000000000.0;
+
+    for(int i=0; i<plotNodes; i++){
+        if(dohArray[i] > max_doh)
+            max_doh = dohArray[i];
+        if(dohArray[i] < min_doh)
+            min_doh = dohArray[i];
+    }
+
+    PLFLT xmin = min_doh, ymin = min_z0oh, xmax = max_doh, ymax = max_z0oh;
+
+    PLINT just=0, axis=0;
+    plstream *pls;
+
+    // plplot initialization
+
+    pls = new plstream();  // declare plplot object
+
+    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    //red on black default
+    plsfnam("z0oh_vs_doh.pdf");// sets the names of the output file
+
+    plscolbg(255,255,255);  //change background color
+
+    pls->init();           // start plplot object
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
+    plcol0(1);              //now change our font color to be the color #1
+
+    pls->adv( 0 );
+    pls->vpor( 0.15, 0.85, 0.1, 0.8 );
+    pls->wind( xmin, xmax, ymin, ymax);
+    pls->box( "bcnst", 0.0, 0, "bcnst", 0.0, 0 );
+
+    pls->line(plotNodes, (PLFLT*) dohArray,(PLFLT*) z0ohArray);   //plot line
+
+    pls->schr(0, 1.6);  //change font size
+    pls->mtex( "t", 4.0, 0.5, 0.5, "z0oh_vs_doh" );
+    pls->schr(0, 1.0);  //change font size
+    pls->mtex( "b", 3.0, 0.5, 0.5, "doh" );
+    pls->mtex( "l", 3.0, 0.5, 0.5, "z0oh" );
+
+    delete pls; // close plot
+
+    delete z0ohArray;
+    z0ohArray = NULL;
+    delete dohArray;
+    dohArray = NULL;
 }
 
 void canopyFlow::make_canopy(canopy::eCanopyType t)
@@ -869,7 +1245,7 @@ void canopyFlow::computeWind()
 //    //now set the stress below the lowest inflection point to the value at the inflection point
 //    for(int i=0; i<end; i++)
 //        uzcs[i] = uzcs[end-1];
-
+    one_doh = 0.0;
     for(int i=0; i<C->numNodes; i++)   //integrate using extended Simpson's rule
     {
         if(i%2 == 0)    //if even numbers
