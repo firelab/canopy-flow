@@ -551,6 +551,8 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 
     pls->init();           // start plplot object
     plscol0(1, 0, 0, 0);    //first change the color pallet0 first color(#1) to be black (0,0,0)
+    plscol0(2, 255, 0, 0);    //change the color pallet0 color#2 to be red
+    plscol0(3, 14, 143, 14);    //change the color pallet0 color(#3) to be dark green (14,143,14)
     plcol0(1);              //now change our font color to be the color #1
 
     //pls->env(xmin, xmax, ymin, ymax, just, axis );
@@ -571,26 +573,33 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     // middle for the plot symbol - see "man plpoin"
     //pls->poin( numNodes, (PLFLT*) x,(PLFLT*) y, 9 );
 
-    //plot fill area for canopy
-    double* xFill = new double[4];
-    double* yFill = new double[4];
-    xFill[0] = 0;
-    yFill[0] = 0;
-    xFill[1] = 0;
-    yFill[1] = C->canopyHeight;
-    xFill[2] = maxWind;
-    yFill[2] = C->canopyHeight;
-    xFill[3] = maxWind;
-    yFill[3] = 0;
-    pls->scol0a( 4, 0, 255, 0, 0.5);
-    pls->col0( 4 );
-    //plscol0(1, 0, 255, 0);    //first change the color pallet0 first color(#1)
-    //plcol0(1);              //now change our font color to be the color #1
-    pls->fill(4, xFill, yFill);
+    //plot fill area for canopy    
+    plcol0(3);              //now change our font color to be the color #3
+    pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
+    pls->box("cmstv", 0.0, 0, "", 0.0, 0);
 
+    double* xFill;
+    double* yFill;
+    PLINT haz_num = C->numNodes + 2;
+    xFill = new double[haz_num];
+    yFill = new double[haz_num];
+    xFill[0] = 0.0;
+    yFill[0] = 0.0;
+    for(int i=1; i<(haz_num-1); i++)
+    {
+        xFill[i] = C->haz[i-1];
+        yFill[i] = zCanopy[i-1];
+    }
+    xFill[haz_num-1] = 0.0;
+    yFill[haz_num-1] = yFill[haz_num-2];
+    pls->fill(haz_num, (PLFLT*) xFill, (PLFLT*) yFill);
+    pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimensional leaf area density" );
+
+
+
+    pls->wind( xmin, xmax, ymin, ymax);
     plcol0(1);              //now change our font color to be the color #1
     pls->line(plotNodes, (PLFLT*) windSpeed,(PLFLT*) z);   //plot wind speed
-    plscol0(2, 255, 0, 0);    //change the color pallet0 color#2 to be red
     plcol0(2);              //now change our font color to be the color #2
     pls->line(C->numNodes, (PLFLT*) windShear,(PLFLT*) z);   //plot ustar^2
 
@@ -615,12 +624,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     pls->mtex( "b", 3.0, 0.5, 0.5, "wind speed" );
     pls->mtex( "l", 3.0, 0.5, 0.5, "height" );
     //pls->wind(0.0, max, 0.0, zCanopy[C->numNodes-1]);  //reset window to haz coordinates
-    plscol0(3, 14, 143, 14);    //change the color pallet0 color(#3) to be dark green (14,143,14)
-    plcol0(3);              //now change our font color to be the color #3
-    pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
-    pls->box("cmstv", 0.0, 0, "", 0.0, 0);
-    pls->line(C->numNodes, (PLFLT*) C->haz,(PLFLT*) zCanopy);   //plot haz
-    pls->mtex( "t", 3.0, 0.5, 0.5, "Non-dimensional leaf area density" );
+
 
     plcol0(0);
 
@@ -667,10 +671,6 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     line_styles[2] = 1;
     line_widths[2] = 1.;
     symbols[2] = "";
-
-    //plscol0a( 15, 32, 32, 32, 0.70 );
-
-
 
     pls->legend(&legend_width, &legend_height,
                 PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, PL_POSITION_LEFT | PL_POSITION_TOP,
