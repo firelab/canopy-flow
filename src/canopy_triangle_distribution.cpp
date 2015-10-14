@@ -85,5 +85,3 @@ void canopy_triangle_distribution::compute_haz()
     for(int i=0; i<numNodes; i++)
         haz[i] = leafAreaIndex * haz[i] /integHazn;
 }
-
-
