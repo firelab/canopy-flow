@@ -716,7 +716,7 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     double* WAFarrayMidFlame = new double[plotNodes];
     double* WAFarrayIntegral = new double[plotNodes];
 
-    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+    double LAIStepSize = (highLAI-lowLAI) / (plotNodes-1);
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
@@ -871,13 +871,13 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     WAFarrayIntegral = NULL;
 }
 
-void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
     double* cdLAI = new double[plotNodes];
     double* z0ohArray = new double[plotNodes];
 
-    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+    double LAIStepSize = (highLAI-lowLAI) / (plotNodes-1);
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
@@ -897,6 +897,8 @@ void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double midFlameHeight, doub
         if(z0ohArray[i] < min_z0oh)
             min_z0oh = z0ohArray[i];
     }
+
+    max_z0oh = 0.2;     //Just arbitrarily set this for the plot axis since that's what Bill did
 
     PLFLT xmin = cdLAI[0], ymin = min_z0oh, xmax = cdLAI[plotNodes-1], ymax = max_z0oh;
 
@@ -938,13 +940,13 @@ void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double midFlameHeight, doub
     z0ohArray = NULL;
 }
 
-void canopyFlow::plotdohvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
-    int plotNodes = 1000;
+    int plotNodes = 10000;
     double* cdLAI = new double[plotNodes];
     double* dohArray = new double[plotNodes];
 
-    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+    double LAIStepSize = (highLAI-lowLAI) / (plotNodes-1);
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
@@ -964,6 +966,8 @@ void canopyFlow::plotdohvsCdLAI(double inputHeight, double midFlameHeight, doubl
         if(dohArray[i] < min_doh)
             min_doh = dohArray[i];
     }
+
+    max_doh = 1.0;     //Just arbitrarily set this for the plot axis since that's what Bill did
 
     PLFLT xmin = cdLAI[0], ymin = min_doh, xmax = cdLAI[plotNodes-1], ymax = max_doh;
 
@@ -1005,13 +1009,13 @@ void canopyFlow::plotdohvsCdLAI(double inputHeight, double midFlameHeight, doubl
     dohArray = NULL;
 }
 
-void canopyFlow::plotz0ohvsone_doh(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
     double* z0ohArray = new double[plotNodes];
     double* one_dohArray = new double[plotNodes];
 
-    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+    double LAIStepSize = (highLAI-lowLAI) / (plotNodes-1);
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
@@ -1081,13 +1085,13 @@ void canopyFlow::plotz0ohvsone_doh(double inputHeight, double midFlameHeight, do
     one_dohArray = NULL;
 }
 
-void canopyFlow::plotz0ohvsdoh(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
+void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
     double* z0ohArray = new double[plotNodes];
     double* dohArray = new double[plotNodes];
 
-    double LAIStepSize = (highLAI-lowLAI) / plotNodes;
+    double LAIStepSize = (highLAI-lowLAI) / (plotNodes-1);
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
@@ -1265,7 +1269,7 @@ void canopyFlow::computeWind()
 
 /**
 *@brief Computes wind adjustment factor using the mid flame height method for the sheltered case.
-*@param inputHeight Height of input windspeed measured from the CANOPY TOP.
+*@param inputHeight Height of input windspeed measured from the GROUND.
 *@param midFlameHeight Midflame height measured from the GROUND.
 *@return returns the wind adjustment factor, if negative the computation was in error
 */
@@ -1277,17 +1281,18 @@ double canopyFlow::get_windAdjustmentFactorShelteredMidFlame(double inputHeight,
         WAF = 0.0;
     }else if(2.0 * midFlameHeight <= C->canopyHeight)    //below canopy (sheltered case)
     {
-        WAF = log(Iz0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
+        WAF = log(Iz0) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
         WAF *= uzc[(int)(midFlameHeight/(C->canopyHeight*C->cellsize) + 0.5)];
     }else{  //flame tip is above canopy top, which is not valid for this function (use unsheltered function)
         WAF = -1.0; //return negative number, meaning invalid
     }
+
     return WAF;
 }
 
 /**
 *@brief Computes wind adjustment factor using the integration method for the sheltered case.
-*@param inputHeight Height of input windspeed measured from the CANOPY TOP.
+*@param inputHeight Height of input windspeed measured from the GROUND.
 *@param flameHeight Height of flame measured from the GROUND.
 *@return returns the wind adjustment factor, if negative the computation was in error
 */
@@ -1300,7 +1305,7 @@ double canopyFlow::get_windAdjustmentFactorShelteredIntegral(double inputHeight,
         WAF = 0.0;
     }else if(flameHeight <= C->canopyHeight)    //below canopy (sheltered case)
     {
-       WAF = log(Iz0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
+       WAF = log(Iz0) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
        int flameHeightIndex = (int)(flameHeight/(C->canopyHeight*C->cellsize) + 0.5);
        for(int i=0; i<=flameHeightIndex; i++)   //integrate using extended Simpson's rule
        {
@@ -1317,12 +1322,13 @@ double canopyFlow::get_windAdjustmentFactorShelteredIntegral(double inputHeight,
     }else{  //midFlameHeight is above canopy top, which is not valid for this function (use unsheltered function)
         WAF = -1.0; //return negative number, meaning invalid
     }
+
     return WAF;
 }
 
 /**
 *@brief Computes wind adjustment factor using the integration method for the unsheltered case.
-*@param inputHeight Height of input windspeed measured from the CANOPY TOP.
+*@param inputHeight Height of input windspeed measured from the GROUND.
 *@param flameHeight Height of flame measured from the GROUND.
 *@return returns the wind adjustment factor, if negative the computation was in error
 */
@@ -1338,7 +1344,8 @@ double canopyFlow::get_windAdjustmentFactorUnshelteredIntegral(double inputHeigh
     }else{
         double delta = flameHeight - C->canopyHeight;
         double Id = C->canopyHeight * one_doh / delta;
-        WAF = (log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0)) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
+        //WAF = log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
+        WAF = (log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0)) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
     }
     return WAF;
 }
@@ -1371,7 +1378,8 @@ double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double d
 //        return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight) / (z0oh * C->canopyHeight) + Iz0);
 //    }
 
-
+    if(!uzc)    //if computeWind hasn't been called yet, call it to set up uzc, etc.
+        computeWind();
 
     double uhuH = get_uhuH(inputSpeed, inputHeight);
     if(desiredHeight <= C->z0g)  //if below ground roughness height
