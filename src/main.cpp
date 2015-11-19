@@ -38,29 +38,29 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Measured Distribution---------------------
-    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_canopy_distribution.txt");
-    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Aspen_Wind.txt");
+    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_canopy_distribution.txt");
+    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Corn_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Corn_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Corn_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Hardwood_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Hardwood_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Hardwood_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Hardwood_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Jack_Pine_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Jack_Pine_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Jack_Pine_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Jack_Pine_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Loblolly_Pine_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Loblolly_Pine_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Loblolly_Pine_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Loblolly_Pine_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Rice_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Rice_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Rice_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Scots_Pine_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Scots_Pine_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Scots_Pine_Wind.txt");
 
-//    wind.C = new measured_distribution("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_canopy_distribution.txt");
-//    wind.readData("/home/jforthofer/programming/canopy-flow/trunk/data/Spruce_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Spruce_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Spruce_Wind.txt");
 
 
 
