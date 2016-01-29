@@ -1249,18 +1249,53 @@ void canopyFlow::computeWind()
 //    //now set the stress below the lowest inflection point to the value at the inflection point
 //    for(int i=0; i<end; i++)
 //        uzcs[i] = uzcs[end-1];
-    one_doh = 0.0;
-    for(int i=0; i<C->numNodes; i++)   //integrate using extended Simpson's rule
-    {
-        if(i%2 == 0)    //if even numbers
-            one_doh += uzcs[i];
-        else            //if odd numbers
-            one_doh += 2.0 * uzcs[i];
-    }
 
-    one_doh = one_doh - 0.5 * (uzcs[0] + uzcs[C->numNodes-1]);
-    one_doh *= C->cellsize * 2.0/3.0;
-    doh = 1.0 - one_doh;
+
+
+
+    //MASSMAN'S OLD METHOD
+//    one_doh = 0.0;
+//    for(int i=0; i<C->numNodes; i++)   //integrate using extended Simpson's rule
+//    {
+//        if(i%2 == 0)    //if even numbers
+//            one_doh += uzcs[i];
+//        else            //if odd numbers
+//            one_doh += 2.0 * uzcs[i];
+//    }
+
+//    one_doh = one_doh - 0.5 * (uzcs[0] + uzcs[C->numNodes-1]);
+//    one_doh *= C->cellsize * 2.0/3.0;
+//    doh = 1.0 - one_doh;
+
+
+
+    //MASSMAN'S NEW METHOD (SHAW AND PEREIRA 1982)
+    double denom=0.0;
+    double numer=0.0;
+    for(int i=0; i<C->numNodes; i++) //integrate using extended Simpson's rule
+    {
+        if(i%2 == 0) //if even numbers
+        {
+            denom += uzcs[i];
+            numer += uzcs[i]*i*C->cellsize;
+        }
+        else //if odd numbers
+        {
+            denom += 2.0 * uzcs[i];
+            numer += 2.0 * uzcs[i]*i*C->cellsize;
+        }
+    }
+    denom = denom - 0.5 * (uzcs[0] + uzcs[C->numNodes-1]);
+    numer = numer - 0.5 * (uzcs[0]*0.0*C->cellsize + uzcs[C->numNodes-1]*(C->numNodes-1)*C->cellsize);
+    denom*= C->cellsize * 2.0/3.0;
+    numer*=C->cellsize*2.0/3.0;
+    doh = (numer/denom)*(1- uzcs[0]);
+    one_doh = 1-doh;
+
+
+
+
+
     z0oh = rough * one_doh * exp(-K/usuh);
     printf("doh = %lf\nz0oh = %lf\n", doh, z0oh);
 
