@@ -1202,7 +1202,7 @@ void canopyFlow::computeWind()
     uzcs =  new double[C->numNodes];
 
     double max_uzc = 0.0;
-    double qc = 0.30;
+    double qc = 0.60;
     double qb = 2.0 / (1 - exp(-1.0));
     double qa = 4.02 - qb;
     double qstar = qa + qb * exp(-qc * nexp);
