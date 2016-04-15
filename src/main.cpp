@@ -9,12 +9,12 @@ int main() {
     canopyFlow wind;
 
     //-------Normal Distribution-----------------------
-    //double heightMaxFoliageDist = 0.5;
-    //double standardDevFoliageDist = 0.25;
-    //wind.C = new canopy_normal_distribution(heightMaxFoliageDist, standardDevFoliageDist);
-    //wind.C->leafAreaIndex = 1.0;
-    //wind.C->canopyHeight = 10.0;                        //canopy height (m)
-    //wind.C->dragCoefAth = 0.2;
+    double heightMaxFoliageDist = 0.5;
+    double standardDevFoliageDist = 0.3;
+    wind.C = new canopy_normal_distribution(heightMaxFoliageDist, standardDevFoliageDist);
+    wind.C->leafAreaIndex = 1.0;
+    wind.C->canopyHeight = 3.0;                        //canopy height (m)
+    wind.C->dragCoefAth = 0.2;
 
     //-------Triangle Distribution---------------------
 //    double A1 = 0.32;       //density of top
@@ -38,8 +38,8 @@ int main() {
     //wind.C->dragCoefAth = 0.2;
 
     //-------Measured Distribution---------------------
-    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_canopy_distribution.txt");
-    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_Wind.txt");
+//    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_canopy_distribution.txt");
+//    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Aspen_Wind.txt");
 
 //    wind.C = new measured_distribution("/mnt/ScratchDrive/src/canopy-flow/data/Corn_canopy_distribution.txt");
 //    wind.readData("/mnt/ScratchDrive/src/canopy-flow/data/Corn_Wind.txt");
@@ -65,7 +65,7 @@ int main() {
 
 
     //Set inputs
-    wind.C->z0g = 0.025;                      //ground roughness length (m)
+    wind.C->z0g = 0.075;                      //ground roughness length (m)
     wind.C->numNodes = 10001;                 //number of cells to use for numerical integration
 
     wind.C->initialize();
@@ -76,17 +76,17 @@ int main() {
     //std::cout << wind.get_windAdjustmentFactorUnshelteredIntegral(6.096, 22.19) << std::endl;
 
     double inputHeight = wind.C->canopyHeight + 6.096;
-    double midFlameHeight = 7.0;
+    double midFlameHeight = 2.5;
     double inputSpeed = 10.0;
     double lowLAI = 0.001;
     double highLAI = 10.0;
     int profileType = 1;    //  0 => sheltered;  1 => unsheltered;
 
 //    wind.plotDimensionalWind(inputSpeed, inputHeight);
-//    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
 //    wind.plotz0ohvsCdLAI(inputHeight, lowLAI, highLAI);
 //    wind.plotdohvsCdLAI(inputHeight, lowLAI, highLAI);
-    wind.plotz0ohvsone_doh(inputHeight, lowLAI, highLAI);
+//    wind.plotz0ohvsone_doh(inputHeight, lowLAI, highLAI);
 //    wind.plotz0ohvsdoh(inputHeight, lowLAI, highLAI);
 
     std::cout << "Done!" << std::endl;

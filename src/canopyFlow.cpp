@@ -13,7 +13,7 @@ canopyFlow::canopyFlow()
     c1 = 0.38;
     c3 = 15.0;
     STRSC = 0.5;
-    rough = 1.07;
+    rough = 1.25;
     logRough = log(rough);
     measuredDataExists = false;
     n_measured = 0;
@@ -1316,7 +1316,7 @@ double canopyFlow::get_windAdjustmentFactorShelteredMidFlame(double inputHeight,
         WAF = 0.0;
     }else if(2.0 * midFlameHeight <= C->canopyHeight)    //below canopy (sheltered case)
     {
-        WAF = log(Iz0) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
+        WAF = log(rough*Iz0) / log(rough*(inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + rough*Iz0);
         WAF *= uzc[(int)(midFlameHeight/(C->canopyHeight*C->cellsize) + 0.5)];
     }else{  //flame tip is above canopy top, which is not valid for this function (use unsheltered function)
         WAF = -1.0; //return negative number, meaning invalid
@@ -1340,7 +1340,8 @@ double canopyFlow::get_windAdjustmentFactorShelteredIntegral(double inputHeight,
         WAF = 0.0;
     }else if(flameHeight <= C->canopyHeight)    //below canopy (sheltered case)
     {
-       WAF = log(Iz0) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
+       WAF = log(rough*Iz0) / log(rough*(inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + rough*Iz0);
+        //WAF = log(Iz0) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
        int flameHeightIndex = (int)(flameHeight/(C->canopyHeight*C->cellsize) + 0.5);
        for(int i=0; i<=flameHeightIndex; i++)   //integrate using extended Simpson's rule
        {
@@ -1380,7 +1381,8 @@ double canopyFlow::get_windAdjustmentFactorUnshelteredIntegral(double inputHeigh
         double delta = flameHeight - C->canopyHeight;
         double Id = C->canopyHeight * one_doh / delta;
         //WAF = log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
-        WAF = (log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0)) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
+        //WAF = (log(delta / (C->canopyHeight * z0oh) + Iz0) - 1.0 + Id * log(1.0/Id + 1.0)) / log((inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + Iz0);
+        WAF = (log(rough*delta / (C->canopyHeight * z0oh) + rough*Iz0) - 1.0 + Id * log(1.0/Id + 1.0)) / log(rough*(inputHeight - C->canopyHeight)/(C->canopyHeight * z0oh) + rough*Iz0);
     }
     return WAF;
 }
