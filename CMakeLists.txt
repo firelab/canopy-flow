@@ -60,6 +60,7 @@ INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
 
 ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy.cpp
+                           src/canopy_double_gaussian_distribution.cpp
                            src/canopy_normal_distribution.cpp
                            src/canopy_triangle_distribution.cpp
                            src/massman_distribution.cpp

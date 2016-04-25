@@ -24,7 +24,7 @@ public:
 
     //inputs
     double heightMaxFoliageDist;    //height of maximum foliage distribution for the normal distribution (m)
-    double standardDevFoliageDist;  //standard deviation of foliage distribution for the normal distribution (m)
+    double standardDevFoliage;  //standard deviation of foliage distribution for the normal distribution (m)
 
 protected:
     void compute_haz();

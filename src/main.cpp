@@ -65,7 +65,7 @@ int main() {
 
 
     //Set inputs
-    wind.C->z0g = 0.075;                      //ground roughness length (m)
+    wind.C->z0g = 0.0075;                      //ground roughness length (m), model is somewhat sensitive to this
     wind.C->numNodes = 10001;                 //number of cells to use for numerical integration
 
     wind.C->initialize();

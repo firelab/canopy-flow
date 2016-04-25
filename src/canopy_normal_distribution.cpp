@@ -5,21 +5,21 @@ canopy_normal_distribution::canopy_normal_distribution() : canopy()
 {
     distributionType = normal_distribution;
     heightMaxFoliageDist = 0.5;
-    standardDevFoliageDist = 0.25;
+    standardDevFoliage = 0.25;
 }
 
 canopy_normal_distribution::canopy_normal_distribution(double heightMaxFoliageDist_, double standardDevFoliageDist_)
 {
     distributionType = normal_distribution;
     heightMaxFoliageDist = heightMaxFoliageDist_;
-    standardDevFoliageDist = standardDevFoliageDist_;
+    standardDevFoliage = standardDevFoliageDist_;
 }
 
 canopy_normal_distribution::canopy_normal_distribution(canopy_normal_distribution &rhs) : canopy(rhs)
 {
     distributionType = rhs.distributionType;
     heightMaxFoliageDist = rhs.heightMaxFoliageDist;
-    standardDevFoliageDist = rhs.standardDevFoliageDist;
+    standardDevFoliage = rhs.standardDevFoliage;
 }
 
 canopy_normal_distribution &canopy_normal_distribution::operator=(const canopy_normal_distribution &rhs)
@@ -28,7 +28,7 @@ canopy_normal_distribution &canopy_normal_distribution::operator=(const canopy_n
     {
         canopy::operator=(rhs);
         heightMaxFoliageDist = rhs.heightMaxFoliageDist;
-        standardDevFoliageDist = rhs.standardDevFoliageDist;
+        standardDevFoliage = rhs.standardDevFoliage;
     }
     return *this;
 }
@@ -52,7 +52,7 @@ void canopy_normal_distribution::compute_haz()
 
     for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
-        norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageDist;
+        norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliage;
         haz[i] = exp(-norm * norm); //temporarily store this here
         if(i%2 == 0)    //if even numbers
             integHazn += haz[i];
