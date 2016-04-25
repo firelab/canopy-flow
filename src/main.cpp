@@ -8,13 +8,22 @@ int main() {
 
     canopyFlow wind;
 
-    //-------Normal Distribution-----------------------
-    double heightMaxFoliageDist = 0.5;
-    double standardDevFoliageDist = 0.3;
-    wind.C = new canopy_normal_distribution(heightMaxFoliageDist, standardDevFoliageDist);
+    //-------Double Gaussian Distribution-----------------------
+    double heightMaxFoliageDist = 0.36;
+    double standardDevFoliageUpper = 0.6;
+    double standardDevFoliageLower = 0.2;
+    wind.C = new canopy_double_gaussian_distribution(heightMaxFoliageDist, standardDevFoliageUpper, standardDevFoliageLower);
     wind.C->leafAreaIndex = 1.0;
-    wind.C->canopyHeight = 3.0;                        //canopy height (m)
+    wind.C->canopyHeight = 8.0;                        //canopy height (m)
     wind.C->dragCoefAth = 0.2;
+
+    //-------Normal Distribution-----------------------
+//    double heightMaxFoliageDist = 0.5;
+//    double standardDevFoliageDist = 0.3;
+//    wind.C = new canopy_normal_distribution(heightMaxFoliageDist, standardDevFoliageDist);
+//    wind.C->leafAreaIndex = 1.0;
+//    wind.C->canopyHeight = 3.0;                        //canopy height (m)
+//    wind.C->dragCoefAth = 0.2;
 
     //-------Triangle Distribution---------------------
 //    double A1 = 0.32;       //density of top
@@ -82,8 +91,8 @@ int main() {
     double highLAI = 10.0;
     int profileType = 1;    //  0 => sheltered;  1 => unsheltered;
 
-//    wind.plotDimensionalWind(inputSpeed, inputHeight);
-    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    wind.plotDimensionalWind(inputSpeed, inputHeight);
+//    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
 //    wind.plotz0ohvsCdLAI(inputHeight, lowLAI, highLAI);
 //    wind.plotdohvsCdLAI(inputHeight, lowLAI, highLAI);
 //    wind.plotz0ohvsone_doh(inputHeight, lowLAI, highLAI);

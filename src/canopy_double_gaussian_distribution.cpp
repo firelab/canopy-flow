@@ -56,8 +56,13 @@ void canopy_double_gaussian_distribution::compute_haz()
 
     for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
-        norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageDist;
+        if(i*cellsize < heightMaxFoliageDist)
+            norm = (heightMaxFoliageDist - i*cellsize) / standardDevFoliageLower;
+        else
+            norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageUpper;
+
         haz[i] = exp(-norm * norm); //temporarily store this here
+
         if(i%2 == 0)    //if even numbers
             integHazn += haz[i];
         else            //if odd numbers

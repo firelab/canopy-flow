@@ -40,7 +40,7 @@ public:
     int numNodes;                   //number of cells to use for numerical integration
 
     //calculated
-    double cellsize;                //cellsize for integration, this is computed, NOT INPUT
+    double cellsize;                //cellsize for integration, this is computed, NOT INPUT, also it is normalized from 0 to 1
     double* haz;                    //nondimensional leaf area density
     double  zetah;                  //this is hacpn at the top node
     double* zetaz;                  //normalized mapped vertical coordinate
