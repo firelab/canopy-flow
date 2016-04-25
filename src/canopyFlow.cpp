@@ -617,7 +617,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
         pls->ptex( xmax, 0.7, 1.0, 0.0, 1, dataFile.substr(found+1).c_str());   //print out data filename on graph
     }
 
-
+    plcol0(1);              //now change our font color to be the color #1
     pls->schr(0, 1.6);  //change font size
     pls->mtex( "t", 4.0, 0.5, 0.5, "Canopy Wind Flow" );
     pls->schr(0, 1.0);  //change font size
