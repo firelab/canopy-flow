@@ -23,8 +23,8 @@ public:
     ~canopy_normal_distribution();
 
     //inputs
-    double heightMaxFoliageDist;    //height of maximum foliage distribution for the normal distribution (m)
-    double standardDevFoliage;  //standard deviation of foliage distribution for the normal distribution (m)
+    double heightMaxFoliage;    //height of maximum foliage distribution for the normal distribution, normalized from 0 to 1
+    double standardDevFoliage;  //standard deviation of foliage distribution for the normal distribution
 
 protected:
     void compute_haz();

@@ -23,9 +23,9 @@ public:
     ~canopy_double_gaussian_distribution();
 
     //inputs
-    double heightMaxFoliageDist;    //height of maximum foliage distribution for the normal distribution (m)
-    double standardDevFoliageUpper;  //standard deviation of foliage distribution for the upper part (m)
-    double standardDevFoliageLower;  //standard deviation of foliage distribution for the lower part (m)
+    double heightMaxFoliage;    //height of maximum foliage distribution for the normal distribution, normalized from 0 to 1
+    double standardDevFoliageUpper;  //standard deviation of foliage distribution for the upper part
+    double standardDevFoliageLower;  //standard deviation of foliage distribution for the lower part
 
 protected:
     void compute_haz();

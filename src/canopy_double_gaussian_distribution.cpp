@@ -4,7 +4,7 @@
 canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : canopy()
 {
     distributionType = normal_distribution;
-    heightMaxFoliageDist = 0.5;
+    heightMaxFoliage = 0.5;
     standardDevFoliageUpper = 0.25;
     standardDevFoliageLower = 0.25;
 }
@@ -12,7 +12,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : can
 canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_)
 {
     distributionType = normal_distribution;
-    heightMaxFoliageDist = heightMaxFoliageDist_;
+    heightMaxFoliage = heightMaxFoliageDist_;
     standardDevFoliageUpper = standardDevFoliageUpper_;
     standardDevFoliageLower = standardDevFoliageLower_;
 }
@@ -20,7 +20,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double 
 canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(canopy_double_gaussian_distribution &rhs) : canopy(rhs)
 {
     distributionType = rhs.distributionType;
-    heightMaxFoliageDist = rhs.heightMaxFoliageDist;
+    heightMaxFoliage = rhs.heightMaxFoliage;
     standardDevFoliageUpper = rhs.standardDevFoliageUpper;
     standardDevFoliageLower = rhs.standardDevFoliageLower;
 }
@@ -30,7 +30,7 @@ canopy_double_gaussian_distribution &canopy_double_gaussian_distribution::operat
     if(&rhs != this)
     {
         canopy::operator=(rhs);
-        heightMaxFoliageDist = rhs.heightMaxFoliageDist;
+        heightMaxFoliage = rhs.heightMaxFoliage;
         standardDevFoliageUpper = rhs.standardDevFoliageUpper;
         standardDevFoliageLower = rhs.standardDevFoliageLower;
     }
@@ -56,10 +56,10 @@ void canopy_double_gaussian_distribution::compute_haz()
 
     for(int i=0; i<numNodes; i++)   //integrate using extended simpson's rule
     {
-        if(i*cellsize < heightMaxFoliageDist)
-            norm = (heightMaxFoliageDist - i*cellsize) / standardDevFoliageLower;
+        if(i*cellsize < heightMaxFoliage)
+            norm = (heightMaxFoliage - i*cellsize) / standardDevFoliageLower;
         else
-            norm = (i*cellsize - heightMaxFoliageDist) / standardDevFoliageUpper;
+            norm = (i*cellsize - heightMaxFoliage) / standardDevFoliageUpper;
 
         haz[i] = exp(-norm * norm); //temporarily store this here
 
