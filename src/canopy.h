@@ -25,9 +25,11 @@ public:
     void plot();
 
     enum eCanopyType{
-        normal_distribution,
+        normal,
         triangle,
         Massman,
+        double_gaussian,
+        uniform,
         measured
     };
     eCanopyType distributionType;

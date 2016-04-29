@@ -3,14 +3,14 @@
 
 canopy_normal_distribution::canopy_normal_distribution() : canopy()
 {
-    distributionType = normal_distribution;
+    distributionType = normal;
     heightMaxFoliage = 0.5;
     standardDevFoliage = 0.25;
 }
 
 canopy_normal_distribution::canopy_normal_distribution(double heightMaxFoliageDist_, double standardDevFoliageDist_)
 {
-    distributionType = normal_distribution;
+    distributionType = normal;
     heightMaxFoliage = heightMaxFoliageDist_;
     standardDevFoliage = standardDevFoliageDist_;
 }
@@ -41,7 +41,6 @@ canopy_normal_distribution::~canopy_normal_distribution()
 void canopy_normal_distribution::compute_haz()
 {
     double norm;
-    double hazn;
     double integHazn = 0.0;
 
     //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

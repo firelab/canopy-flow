@@ -8,14 +8,20 @@ int main() {
 
     canopyFlow wind;
 
-    //-------Double Gaussian Distribution-----------------------
-    double heightMaxFoliageDist = 0.36;
-    double standardDevFoliageUpper = 0.6;
-    double standardDevFoliageLower = 0.2;
-    wind.C = new canopy_double_gaussian_distribution(heightMaxFoliageDist, standardDevFoliageUpper, standardDevFoliageLower);
+    //-------Uniform Distribution-----------------------
+    wind.C = new canopy_uniform_distribution();
     wind.C->leafAreaIndex = 1.0;
     wind.C->canopyHeight = 8.0;                        //canopy height (m)
     wind.C->dragCoefAth = 0.2;
+
+    //-------Double Gaussian Distribution-----------------------
+//    double heightMaxFoliageDist = 0.36;
+//    double standardDevFoliageUpper = 0.6;
+//    double standardDevFoliageLower = 0.2;
+//    wind.C = new canopy_double_gaussian_distribution(heightMaxFoliageDist, standardDevFoliageUpper, standardDevFoliageLower);
+//    wind.C->leafAreaIndex = 1.0;
+//    wind.C->canopyHeight = 8.0;                        //canopy height (m)
+//    wind.C->dragCoefAth = 0.2;
 
     //-------Normal Distribution-----------------------
 //    double heightMaxFoliageDist = 0.5;

@@ -8,6 +8,7 @@
 //#include "boost/math/special_functions.hpp"
 #include <plstream.h>
 #include "canopy.h"
+#include "canopy_uniform_distribution.h"
 #include "canopy_double_gaussian_distribution.h"
 #include "canopy_normal_distribution.h"
 #include "canopy_triangle_distribution.h"

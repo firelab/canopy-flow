@@ -1163,7 +1163,7 @@ void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI
 
 void canopyFlow::make_canopy(canopy::eCanopyType t)
 {
-    if(t == canopy::normal_distribution)
+    if(t == canopy::normal)
         C = new canopy_normal_distribution;
     else if(t == canopy::triangle)
         C = new canopy_triangle_distribution;
@@ -1178,7 +1178,7 @@ void canopyFlow::make_canopy(canopy::eCanopyType t)
 void canopyFlow::make_canopy(canopy* X)
 {
     delete C;
-    if(X->distributionType == canopy::normal_distribution)
+    if(X->distributionType == canopy::normal)
         C = new canopy_normal_distribution(*((canopy_normal_distribution*)X));
     else if(X->distributionType == canopy::triangle)
         C = new canopy_triangle_distribution(*((canopy_triangle_distribution*)X));

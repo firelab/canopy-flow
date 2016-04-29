@@ -3,15 +3,15 @@
 
 canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : canopy()
 {
-    distributionType = normal_distribution;
-    heightMaxFoliage = 0.5;
-    standardDevFoliageUpper = 0.25;
-    standardDevFoliageLower = 0.25;
+    distributionType = double_gaussian;
+    heightMaxFoliage = 0.6;
+    standardDevFoliageUpper = 0.31;
+    standardDevFoliageLower = 0.31;
 }
 
 canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_)
 {
-    distributionType = normal_distribution;
+    distributionType = double_gaussian;
     heightMaxFoliage = heightMaxFoliageDist_;
     standardDevFoliageUpper = standardDevFoliageUpper_;
     standardDevFoliageLower = standardDevFoliageLower_;
@@ -45,7 +45,6 @@ canopy_double_gaussian_distribution::~canopy_double_gaussian_distribution()
 void canopy_double_gaussian_distribution::compute_haz()
 {
     double norm;
-    double hazn;
     double integHazn = 0.0;
 
     //---------------FIX THIS------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
