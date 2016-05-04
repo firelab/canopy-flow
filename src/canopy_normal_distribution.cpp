@@ -8,7 +8,7 @@ canopy_normal_distribution::canopy_normal_distribution() : canopy()
     standardDevFoliage = 0.25;
 }
 
-canopy_normal_distribution::canopy_normal_distribution(double heightMaxFoliageDist_, double standardDevFoliageDist_)
+canopy_normal_distribution::canopy_normal_distribution(double heightMaxFoliageDist_, double standardDevFoliageDist_) : canopy()
 {
     distributionType = normal;
     heightMaxFoliage = heightMaxFoliageDist_;

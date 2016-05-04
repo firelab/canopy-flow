@@ -11,7 +11,7 @@ massman_distribution::massman_distribution() : canopy()
     zmax = 0.7;
 }
 
-massman_distribution::massman_distribution(double A1_, double A2_, double A3_, double zmax_)
+massman_distribution::massman_distribution(double A1_, double A2_, double A3_, double zmax_) : canopy()
 {
     distributionType = Massman;
     A1 = A1_;

@@ -7,7 +7,7 @@ canopy_uniform_distribution::canopy_uniform_distribution() : canopy()
     crownRatio = 1.0;
 }
 
-canopy_uniform_distribution::canopy_uniform_distribution(double crownRatio_)
+canopy_uniform_distribution::canopy_uniform_distribution(double crownRatio_) : canopy()
 {
     distributionType = uniform;
     crownRatio = crownRatio_;

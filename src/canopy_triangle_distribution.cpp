@@ -12,7 +12,7 @@ canopy_triangle_distribution::canopy_triangle_distribution() : canopy()
     zbot = 0.1;    //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
 }
 
-canopy_triangle_distribution::canopy_triangle_distribution(double A1_, double Ax_, double Ab_, double zmax_, double zbot_)
+canopy_triangle_distribution::canopy_triangle_distribution(double A1_, double Ax_, double Ab_, double zmax_, double zbot_) : canopy()
 {
     distributionType = triangle;
     A1 = A1_;

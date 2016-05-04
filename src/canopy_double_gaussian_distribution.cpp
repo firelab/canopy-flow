@@ -9,7 +9,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : can
     standardDevFoliageLower = 0.31;
 }
 
-canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_)
+canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_) : canopy()
 {
     distributionType = double_gaussian;
     heightMaxFoliage = heightMaxFoliageDist_;

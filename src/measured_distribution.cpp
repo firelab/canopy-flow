@@ -11,7 +11,7 @@ measured_distribution::measured_distribution() : canopy()
     n_zh = 0;
 }
 
-measured_distribution::measured_distribution(std::string filename)
+measured_distribution::measured_distribution(std::string filename) : canopy()
 {
     distributionType = measured;
 
