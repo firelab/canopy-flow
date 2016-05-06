@@ -1223,52 +1223,6 @@ void canopyFlow::computeWind()
     for(int i=0; i<C->numNodes; i++)
         uzc[i] /= max_uzc;
 
-    //uzcs[0] = 0.0;
-    //for(int i=1;i<C->numNodes;i++) //calculate Reynolds stress using cumulative trapazoid
-    //    uzcs[i] = uzcs[i-1] + (C->hacpz[i-1]*uzc[i-1]*uzc[i-1] + C->hacpz[i]*uzc[i]*uzc[i]) * 0.5;
-
-    //for(int i=1;i<C->numNodes;i++)
-    //    uzcs[i] /= uzcs[C->numNodes-1];
-
-    //compute lowest inflection point
-//    int begin = (int) 2.0 * (C->z0gh/C->cellsize);
-//    double difU;
-//    double difUOld = uzc[begin] - 2.0*uzc[begin-1] + uzc[begin-2];   //start by computing the value of the second derivative at node = begin-1
-//    int end;
-//    for(int i=begin; i<C->numNodes-1; i++)
-//    {
-//        difU = uzc[i+1] - 2.0*uzc[i] + uzc[i-1];
-//        if((difU*difUOld) < 0.0)   //if we've switched sign, break
-//        {
-//            end = i;
-//            break;
-//        }
-//        difUOld = difU;
-//    }
-
-//    //now set the stress below the lowest inflection point to the value at the inflection point
-//    for(int i=0; i<end; i++)
-//        uzcs[i] = uzcs[end-1];
-
-
-
-
-    //MASSMAN'S OLD METHOD
-//    one_doh = 0.0;
-//    for(int i=0; i<C->numNodes; i++)   //integrate using extended Simpson's rule
-//    {
-//        if(i%2 == 0)    //if even numbers
-//            one_doh += uzcs[i];
-//        else            //if odd numbers
-//            one_doh += 2.0 * uzcs[i];
-//    }
-
-//    one_doh = one_doh - 0.5 * (uzcs[0] + uzcs[C->numNodes-1]);
-//    one_doh *= C->cellsize * 2.0/3.0;
-//    doh = 1.0 - one_doh;
-
-
-
     //MASSMAN'S NEW METHOD (SHAW AND PEREIRA 1982)
     double denom=0.0;
     double numer=0.0;
@@ -1292,12 +1246,7 @@ void canopyFlow::computeWind()
     doh = (numer/denom)*(1- uzcs[0]);
     one_doh = 1-doh;
 
-
-
-
-
     z0oh = rough * one_doh * exp(-K/usuh);
-    printf("doh = %lf\nz0oh = %lf\n", doh, z0oh);
 
     Iz0 = one_doh / z0oh;
 }
