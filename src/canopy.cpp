@@ -6,7 +6,7 @@ canopy::canopy()
     canopyHeight = 10.0;
     z0g = 0.025;
     dragCoefAth = 0.2;
-    numNodes = 101;   //MUST BE ODD NUMBER
+    numNodes = 10001;   //MUST BE ODD NUMBER
     cellsize = 0.0;    //cellsize here is normalized from 0 to 1
     cumulativeLeafDragArea = NULL;
     haz = NULL;
