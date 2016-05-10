@@ -5,15 +5,15 @@
 #include "canopyFlow.h"
 #include "windAdjustmentFactor.h"
 
-void plotWAFvsCanopyCover(double canopyHeight, double canopyCover, double crownRatio, double dragCoef, double groundRoughness, double fuelBedDepth, double inputHeight, double midFlameHeight);
+void plotWAFvsCanopyCover(double canopyHeight, double crownRatio, double dragCoef, double groundRoughness, double fuelBedDepth, double inputHeight, double midFlameHeight);
 
 static const double pi = acos(-1.0);
 
 int main() {
 
-    double canopyHeight = 10.0;                 //canopy height (m)
-    double canopyCover = 0.5;                   //canopy cover [0..1]
-    double crownRatio = 0.7;                    //crown ratio [0..1]
+    double canopyHeight = 20.0;                 //canopy height (m)
+    //double canopyCover = 0.7;                   //canopy cover [0..1]
+    double crownRatio = 0.5;                    //crown ratio [0..1]
     double dragCoef = 0.2;                      //drag coefficient (Albini used 1.0, Massman likes 0.2)
     double fuelBedDepth = 0.5 / 3.28084;                  //fuel bed depth (m)
     double inputHeight = canopyHeight + 6.096;  //input wind height (m)
@@ -21,13 +21,13 @@ int main() {
     //double groundRoughness = 0.0075;            //ground roughness (m)
     double groundRoughness = fuelBedDepth * 0.13;            //ground roughness (m), using Albini method
 
-    plotWAFvsCanopyCover(canopyHeight, canopyCover, crownRatio, dragCoef, groundRoughness, fuelBedDepth, inputHeight, midFlameHeight);
+    plotWAFvsCanopyCover(canopyHeight, crownRatio, dragCoef, groundRoughness, fuelBedDepth, inputHeight, midFlameHeight);
 
     std::cout << "Done!" << std::endl;
     return 0;
 }
 
-void plotWAFvsCanopyCover(double canopyHeight, double canopyCover, double crownRatio, double dragCoef, double groundRoughness, double fuelBedDepth, double inputHeight, double midFlameHeight)
+void plotWAFvsCanopyCover(double canopyHeight, double crownRatio, double dragCoef, double groundRoughness, double fuelBedDepth, double inputHeight, double midFlameHeight)
 {
 
     WindAjustmentFactor albini;
@@ -67,9 +67,9 @@ void plotWAFvsCanopyCover(double canopyHeight, double canopyCover, double crownR
 
     pls = new plstream();  // declare plplot object
 
-    plsdev("pdf"); //cairo uses the same color scheme as on screen - black on
+    plsdev("svg"); //cairo uses the same color scheme as on screen - black on
     //red on black default
-    plsfnam("massman_vs_albini_WAF.pdf");// sets the names of the output file
+    plsfnam("massman_vs_albini_WAF.svg");// sets the names of the output file
 
     plscolbg(255,255,255);  //change background color
 
