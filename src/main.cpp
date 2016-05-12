@@ -11,8 +11,8 @@ int main() {
     //-------Uniform Distribution-----------------------
     double crownRatio = 0.7;
     wind.C = new canopy_uniform_distribution(crownRatio);
-    wind.C->leafAreaIndex = 1.0;
-    wind.C->canopyHeight = 8.0;                        //canopy height (m)
+    wind.C->leafAreaIndex = 5.0;
+    wind.C->canopyHeight = 10.0;                        //canopy height (m)
     wind.C->dragCoefAth = 0.2;
 
     //-------Double Gaussian Distribution-----------------------
