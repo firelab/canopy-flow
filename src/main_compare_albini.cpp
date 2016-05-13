@@ -37,7 +37,6 @@ int main() {
     massman.C->dragCoefAth = dragCoef;
     massman.C->z0g = groundRoughness;
     massman.C->numNodes = 10001;
-    massman.C->initialize();
     massman.computeWind();
 
     double canopyCoverStepSize = 1.0 / (plotNodes-1);
@@ -47,7 +46,6 @@ int main() {
     {
         canopyCoverArray[i] = i * canopyCoverStepSize;
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
-        massman.C->initialize();
         massman.computeWind();
         WAFarrayMassmanBelow[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
         WAFarrayAlbiniBelow[i] = albini.calculateWindAdjustmentFactor(canopyCoverArray[i], canopyHeight*3.28084, crownRatio, fuelBedDepth*3.28084);  //arguments converted to feet here
@@ -64,14 +62,12 @@ int main() {
     massman.C->dragCoefAth = dragCoef;
     massman.C->z0g = 0.0025;   //not sure what to use here...  fairly smooth roughness under canopy...?
     massman.C->numNodes = 10001;
-    massman.C->initialize();
     massman.computeWind();
 
     //build more plot arrays
     for(int i=0; i<plotNodes; i++)
     {
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);  //10.6955 is the value albini uses for beta*sigma, but in m^-1
-        massman.C->initialize();
         massman.computeWind();
         WAFarrayMassmanAbove[i] = massman.get_windAdjustmentFactorUnshelteredIntegral(inputHeight, massman.C->canopyHeight*2.0); //Assume flame height is double the canopy height
         WAFarrayAlbiniAbove[i] = albini.calculateWindAdjustmentFactor(0.0, 0.0, crownRatio, massman.C->canopyHeight*3.28084);  //arguments converted to feet here
