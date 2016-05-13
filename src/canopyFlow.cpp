@@ -1169,6 +1169,10 @@ void canopyFlow::make_canopy(canopy::eCanopyType t)
         C = new canopy_triangle_distribution;
     else if(t == canopy::Massman)
         C = new massman_distribution;
+    else if(t == canopy::double_gaussian)
+        C = new canopy_double_gaussian_distribution;
+    else if(t == canopy::uniform)
+        C = new canopy_uniform_distribution;
     else if(t == canopy::measured)
         C = new measured_distribution;
     else
@@ -1405,7 +1409,7 @@ double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double d
 //    {
 //        return 0.0;
 //    }else if(desiredHeight <= C->canopyHeight)  //below canopy
-//    {
+//    {make_canopy
 //        //return uCanopyHeight * uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize))];
 //        return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * inputSpeed * uhuH;
 //    }else   //above canopy height
