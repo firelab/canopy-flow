@@ -722,7 +722,6 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
         cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
         cdLAI[i] = log10(cdLAI[i]);
-        C->initialize();
         computeWind();
         if(profileType == 0)    //sheltered
         {
@@ -883,7 +882,6 @@ void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highL
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
         cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
         cdLAI[i] = log10(cdLAI[i]);
-        C->initialize();
         computeWind();
         z0ohArray[i] = z0oh;
     }
@@ -952,7 +950,6 @@ void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLA
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
         cdLAI[i] = C->leafAreaIndex*C->dragCoefAth;
         cdLAI[i] = log10(cdLAI[i]);
-        C->initialize();
         computeWind();
         dohArray[i] = doh;
     }
@@ -1019,7 +1016,6 @@ void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double hig
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
-        C->initialize();
         computeWind();
         z0ohArray[i] = z0oh;
         one_dohArray[i] = one_doh;
@@ -1095,7 +1091,6 @@ void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI
 
     for(int i=0; i<plotNodes; i++){
         C->leafAreaIndex = lowLAI + i * LAIStepSize;
-        C->initialize();
         computeWind();
         z0ohArray[i] = z0oh;
         dohArray[i] = doh;
@@ -1188,6 +1183,10 @@ void canopyFlow::make_canopy(canopy* X)
         C = new canopy_triangle_distribution(*((canopy_triangle_distribution*)X));
     else if(X->distributionType == canopy::Massman)
         C = new massman_distribution(*((massman_distribution*)X));
+    else if(X->distributionType == canopy::double_gaussian)
+        C = new canopy_double_gaussian_distribution(*((canopy_double_gaussian_distribution*)X));
+    else if(X->distributionType == canopy::uniform)
+        C = new canopy_uniform_distribution(*((canopy_uniform_distribution*)X));
     else if(X->distributionType == canopy::measured)
         C = new measured_distribution(*((measured_distribution*)X));
     else
@@ -1196,7 +1195,7 @@ void canopyFlow::make_canopy(canopy* X)
 
 void canopyFlow::computeWind()
 {
-    //C->initialize();
+    C->initialize();
     usuh = c1 - (c1 + K / log(C->z0gh)) * exp(-c3 *C->zetah);
     double Csurf = 2.0 * usuh * usuh;
     double nexp = C->zetah / Csurf;

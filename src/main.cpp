@@ -84,7 +84,6 @@ int main() {
     wind.C->z0g = 0.0075;                      //ground roughness length (m), model is somewhat sensitive to this
     wind.C->numNodes = 10001;                 //number of cells to use for numerical integration
 
-    wind.C->initialize();
     wind.computeWind();
 
     //std::cout << wind.get_windAdjustmentFactorShelteredMidFlame(6.096, 1.0) << std::endl;
