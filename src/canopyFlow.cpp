@@ -1341,32 +1341,6 @@ double canopyFlow::get_windAdjustmentFactorUnshelteredIntegral(double inputHeigh
 
 double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double desiredHeight)
 {
-    //double uCanopyHeight = K * inputSpeed / (usuh * (log((inputHeight/C->canopyHeight - doh) / z0oh) + logRough));
-    //double uCanopyHeight = inputSpeed * log(Iz0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
-    //printf("uCanopyHeight = %lf\n", uCanopyHeight);
-    //double uCanopyHeight = inputSpeed * log((1.0 - doh) / z0oh) / log((inputHeight/C->canopyHeight - doh) / z0oh);
-    //double uhuH = log(Iz0) / log(inputHeight/(C->canopyHeight * z0oh) + Iz0);
-    //double uhuH = 1.0 / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
-
-
-
-
-
-//    double uhuH = 1.0 / log((inputHeight) / (z0oh * C->canopyHeight) + Iz0);
-//    if(desiredHeight <= C->z0g)  //if below ground roughness height
-//    {
-//        return 0.0;
-//    }else if(desiredHeight <= C->canopyHeight)  //below canopy
-//    {make_canopy
-//        //return uCanopyHeight * uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize))];
-//        return uzc[(int)(desiredHeight/(C->canopyHeight*C->cellsize) + 0.5)] * inputSpeed * uhuH;
-//    }else   //above canopy height
-//    {
-//        //return uCanopyHeight * usuh * log((desiredHeight/C->canopyHeight - doh) / (z0oh + C->z0g/C->canopyHeight) / K;
-//        //return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
-//        return inputSpeed * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0) / log((inputHeight) / (z0oh * C->canopyHeight) + Iz0);
-//    }
-
     if(!uzc)    //if computeWind hasn't been called yet, call it to set up uzc, etc.
         computeWind();
 
