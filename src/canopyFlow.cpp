@@ -1165,7 +1165,7 @@ void canopyFlow::make_canopy(canopy::eCanopyType t)
     else if(t == canopy::Massman)
         C = new massman_distribution;
     else if(t == canopy::double_gaussian)
-        C = new canopy_double_gaussian_distribution;
+        C = new canopy_asymmetric_gaussian_distribution;
     else if(t == canopy::uniform)
         C = new canopy_uniform_distribution;
     else if(t == canopy::measured)
@@ -1184,7 +1184,7 @@ void canopyFlow::make_canopy(canopy* X)
     else if(X->distributionType == canopy::Massman)
         C = new massman_distribution(*((massman_distribution*)X));
     else if(X->distributionType == canopy::double_gaussian)
-        C = new canopy_double_gaussian_distribution(*((canopy_double_gaussian_distribution*)X));
+        C = new canopy_asymmetric_gaussian_distribution(*((canopy_asymmetric_gaussian_distribution*)X));
     else if(X->distributionType == canopy::uniform)
         C = new canopy_uniform_distribution(*((canopy_uniform_distribution*)X));
     else if(X->distributionType == canopy::measured)

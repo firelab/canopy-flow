@@ -1,7 +1,7 @@
 
 #include "canopy_double_gaussian_distribution.h"
 
-canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : canopy()
+canopy_asymmetric_gaussian_distribution::canopy_asymmetric_gaussian_distribution() : canopy()
 {
     distributionType = double_gaussian;
     heightMaxFoliage = 0.6;
@@ -9,7 +9,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution() : can
     standardDevFoliageLower = 0.31;
 }
 
-canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_) : canopy()
+canopy_asymmetric_gaussian_distribution::canopy_asymmetric_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_) : canopy()
 {
     distributionType = double_gaussian;
     heightMaxFoliage = heightMaxFoliageDist_;
@@ -17,7 +17,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(double 
     standardDevFoliageLower = standardDevFoliageLower_;
 }
 
-canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(canopy_double_gaussian_distribution &rhs) : canopy(rhs)
+canopy_asymmetric_gaussian_distribution::canopy_asymmetric_gaussian_distribution(canopy_asymmetric_gaussian_distribution &rhs) : canopy(rhs)
 {
     distributionType = rhs.distributionType;
     heightMaxFoliage = rhs.heightMaxFoliage;
@@ -25,7 +25,7 @@ canopy_double_gaussian_distribution::canopy_double_gaussian_distribution(canopy_
     standardDevFoliageLower = rhs.standardDevFoliageLower;
 }
 
-canopy_double_gaussian_distribution &canopy_double_gaussian_distribution::operator=(const canopy_double_gaussian_distribution &rhs)
+canopy_asymmetric_gaussian_distribution &canopy_asymmetric_gaussian_distribution::operator=(const canopy_asymmetric_gaussian_distribution &rhs)
 {
     if(&rhs != this)
     {
@@ -37,12 +37,12 @@ canopy_double_gaussian_distribution &canopy_double_gaussian_distribution::operat
     return *this;
 }
 
-canopy_double_gaussian_distribution::~canopy_double_gaussian_distribution()
+canopy_asymmetric_gaussian_distribution::~canopy_asymmetric_gaussian_distribution()
 {
 
 }
 
-void canopy_double_gaussian_distribution::compute_haz()
+void canopy_asymmetric_gaussian_distribution::compute_haz()
 {
     double norm;
     double integHazn = 0.0;

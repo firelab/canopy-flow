@@ -1,5 +1,5 @@
-#ifndef CANOPY_DOUBLE_GAUSS_H
-#define CANOPY_DOUBLE_GAUSS_H
+#ifndef CANOPY_ASYMMETRIC_GAUSS_H
+#define CANOPY_ASYMMETRIC_GAUSS_H
 
 #include <math.h>
 #include <cstring>
@@ -12,15 +12,15 @@ Class that stores canopy density, etc. information for a double Gaussian distrib
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 
-class canopy_double_gaussian_distribution : public canopy
+class canopy_asymmetric_gaussian_distribution : public canopy
 {
 
 public:
-    canopy_double_gaussian_distribution();
-    canopy_double_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_);
-    canopy_double_gaussian_distribution(canopy_double_gaussian_distribution &rhs);
-    canopy_double_gaussian_distribution &operator=(const canopy_double_gaussian_distribution &rhs);
-    ~canopy_double_gaussian_distribution();
+    canopy_asymmetric_gaussian_distribution();
+    canopy_asymmetric_gaussian_distribution(double heightMaxFoliageDist_, double standardDevFoliageUpper_, double standardDevFoliageLower_);
+    canopy_asymmetric_gaussian_distribution(canopy_asymmetric_gaussian_distribution &rhs);
+    canopy_asymmetric_gaussian_distribution &operator=(const canopy_asymmetric_gaussian_distribution &rhs);
+    ~canopy_asymmetric_gaussian_distribution();
 
     //inputs
     double heightMaxFoliage;    //height of maximum foliage distribution for the normal distribution, normalized from 0 to 1
@@ -31,4 +31,4 @@ protected:
     void compute_haz();
 };
 
-#endif // CANOPY_DOUBLE_GAUSS_H
+#endif // CANOPY_ASYMMETRIC_GAUSS_H
