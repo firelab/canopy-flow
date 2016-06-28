@@ -47,12 +47,20 @@ int main() {
     int plotNodes = 1000;
     double* canopyCoverArray = new double[plotNodes];
     double* WAFarrayAlbiniBelow = new double[plotNodes];
-    double* WAFarrayMassmanBelow = new double[plotNodes];
+    double* WAFarrayMassmanBelowUniZ0gHfuel = new double[plotNodes];
+    double* WAFarrayMassmanBelowUniZ0g01 = new double[plotNodes];
+    double* WAFarrayMassmanBelowGaussZ0gHfuel = new double[plotNodes];
+    double* WAFarrayMassmanBelowGaussZ0g01 = new double[plotNodes];
     double* WAFarrayAlbiniAbove = new double[plotNodes];
     double* WAFarrayMassmanAbove = new double[plotNodes];
 
     double* albiniBelowSpread = new double[plotNodes];
-    double* massmanBelowSpread = new double[plotNodes];
+    double* massmanBelowSpreadUniZ0gHfuel = new double[plotNodes];
+    double* massmanBelowSpreadUniZ0g01 = new double[plotNodes];
+    double* massmanBelowSpreadGaussZ0gHfuel = new double[plotNodes];
+    double* massmanBelowSpreadGaussZ0g01 = new double[plotNodes];
+
+
     double* albiniAboveSpread = new double[plotNodes];
     double* massmanAboveSpread = new double[plotNodes];
 
@@ -64,7 +72,7 @@ int main() {
     double* WAFAboveIntegral = new double[plotNodes];
 
 
-    //-------Uniform Distribution, Below Canopy Flames-----------------------
+    //-------Below Canopy Flames-----------------------
     massman.C = new canopy_uniform_distribution(crownRatio);
     massman.C->canopyHeight = canopyHeight;
     massman.C->dragCoefAth = dragCoef;
@@ -76,21 +84,27 @@ int main() {
     double flameHeightStepSizeAbove = (inputHeight-canopyHeight) / (plotNodes);
     double flameHeightStepSizeBelow = canopyHeight / (plotNodes-1);
 
+    //compute Albini below canopy
+    for(int i=0; i<plotNodes; i++)
+    {
+        canopyCoverArray[i] = i * canopyCoverStepSize;
+        WAFarrayAlbiniBelow[i] = albini.calculateWindAdjustmentFactor(canopyCoverArray[i], canopyHeight*3.28084, crownRatio, fuelBedDepth*3.28084);  //arguments converted to feet here
 
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayAlbiniBelow[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        albiniBelowSpread[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+    }
+
+    //compute Massman below canopy, uniform canopy profile, z0g=0.13*Hfuel
     for(int i=0; i<plotNodes; i++)
     {
         //build plot arrays for Massman vs Albini WAF plot below canopy
         canopyCoverArray[i] = i * canopyCoverStepSize;
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
         massman.computeWind();
-        WAFarrayMassmanBelow[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
-        WAFarrayAlbiniBelow[i] = albini.calculateWindAdjustmentFactor(canopyCoverArray[i], canopyHeight*3.28084, crownRatio, fuelBedDepth*3.28084);  //arguments converted to feet here
+        WAFarrayMassmanBelowUniZ0gHfuel[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
 
-        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayAlbiniBelow[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
-        albiniBelowSpread[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
-
-        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelow[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
-        massmanBelowSpread[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0gHfuel[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadUniZ0gHfuel[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
 
         //reset canopy cover
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCover * betaSigma / (6.0 * pi);
@@ -103,8 +117,58 @@ int main() {
         WAFAboveIntegral[i] = massman.get_windAdjustmentFactorUnshelteredIntegral(inputHeight, flameHeightAbove[i]);
     }
 
-    //-------Uniform Distribution, Above Canopy Flames-----------------------
-    //----Settings for flames above canopy top case----
+    //compute Massman below canopy, uniform canopy profile, z0g=0.01m
+    for(int i=0; i<plotNodes; i++)
+    {
+        //build plot arrays for Massman vs Albini WAF plot below canopy
+        canopyCoverArray[i] = i * canopyCoverStepSize;
+        massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
+        massman.C->z0g = 0.01;
+        massman.computeWind();
+        WAFarrayMassmanBelowUniZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadUniZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+    }
+
+    //change to asymmetric Gaussian canopy profile
+    delete massman.C;
+    massman.C = new canopy_uniform_distribution(crownRatio);
+    massman.C->canopyHeight = canopyHeight;
+    massman.C->dragCoefAth = dragCoef;
+    massman.C->z0g = groundRoughness;
+    massman.C->numNodes = 10001;
+    massman.computeWind();
+
+    //compute Massman below canopy, asymmetric Gaussian canopy profile, z0g=0.13*Hfuel
+    for(int i=0; i<plotNodes; i++)
+    {
+        //build plot arrays for Massman vs Albini WAF plot below canopy
+        canopyCoverArray[i] = i * canopyCoverStepSize;
+        massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
+        massman.C->z0g = 0.01;
+        massman.computeWind();
+        WAFarrayMassmanBelowUniZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadUniZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+    }
+
+    //compute Massman below canopy, asymmetric Gaussian canopy profile, z0g=0.01m
+    for(int i=0; i<plotNodes; i++)
+    {
+        //build plot arrays for Massman vs Albini WAF plot below canopy
+        canopyCoverArray[i] = i * canopyCoverStepSize;
+        massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
+        massman.C->z0g = 0.01;
+        massman.computeWind();
+        WAFarrayMassmanBelowUniZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadUniZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+    }
+
+    //-------Above Canopy Flames-----------------------
     fuelModelNumber = 4;
     canopyHeight = fuelModelSet.getFuelbedDepth(fuelModelNumber) / 3.28084;                 //canopy height (m)
     inputHeight = canopyHeight + 6.096;  //input wind height (m)
@@ -114,7 +178,7 @@ int main() {
     massman.C = new canopy_uniform_distribution(crownRatio);
     massman.C->canopyHeight = canopyHeight;
     massman.C->dragCoefAth = dragCoef;
-    massman.C->z0g = 0.0025;   //not sure what to use here...  fairly smooth roughness under canopy...?
+    massman.C->z0g = 0.01;   //not sure what to use here...  fairly smooth roughness under canopy...?
     massman.C->numNodes = 10001;
     massman.computeWind();
 
@@ -164,7 +228,7 @@ int main() {
 
     pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayAlbiniBelow);   //plot Albini
     plcol0(2);              //now change our font color to be the color #2
-    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelow);   //plot Massman
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowUniZ0gHfuel);   //plot Massman
     plcol0(1);              //now change our font color to be the color #1
 
     pls->lsty(2);
@@ -175,7 +239,7 @@ int main() {
     pls->lsty(1);
 
     pls->schr(0, 1.6);  //change font size
-    pls->mtex( "t", 4.0, 0.5, 0.5, "Albini vs. Massman" );
+    pls->mtex( "t", 4.0, 0.5, 0.5, "Albini vs. Massman WAF" );
     pls->schr(0, 1.0);  //change font size
     pls->mtex( "b", 3.0, 0.5, 0.5, "Canopy Cover" );
     pls->mtex( "l", 3.0, 0.5, 0.5, "WAF" );
@@ -284,7 +348,7 @@ int main() {
 
     pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) albiniBelowSpread);   //plot Albini
     plcol0(2);              //now change our font color to be the color #2
-    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpread);   //plot Massman
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadUniZ0gHfuel);   //plot Massman
     plcol0(1);              //now change our font color to be the color #1
 
     pls->lsty(2);
@@ -295,7 +359,7 @@ int main() {
     pls->lsty(1);
 
     pls->schr(0, 1.6);  //change font size
-    pls->mtex( "t", 4.0, 0.5, 0.5, "Albini vs. Massman" );
+    pls->mtex( "t", 4.0, 0.5, 0.5, "Albini vs. Massman Spread Rate" );
     pls->schr(0, 1.0);  //change font size
     pls->mtex( "b", 3.0, 0.5, 0.5, "Canopy Cover" );
     pls->mtex( "l", 3.0, 0.5, 0.5, "Spread Rate (ch/h)" );
@@ -480,8 +544,14 @@ int main() {
     canopyCoverArray = NULL;
     delete WAFarrayAlbiniBelow;
     WAFarrayAlbiniBelow = NULL;
-    delete WAFarrayMassmanBelow;
-    WAFarrayMassmanBelow = NULL;
+    delete WAFarrayMassmanBelowUniZ0gHfuel;
+    WAFarrayMassmanBelowUniZ0gHfuel = NULL;
+    delete WAFarrayMassmanBelowUniZ0g01;
+    WAFarrayMassmanBelowUniZ0g01 = NULL;
+    delete WAFarrayMassmanBelowGaussZ0gHfuel;
+    WAFarrayMassmanBelowGaussZ0gHfuel = NULL;
+    delete WAFarrayMassmanBelowGaussZ0g01;
+    WAFarrayMassmanBelowGaussZ0g01 = NULL;
     delete WAFarrayAlbiniAbove;
     WAFarrayAlbiniAbove = NULL;
     delete WAFarrayMassmanAbove;
@@ -489,8 +559,14 @@ int main() {
 
     delete albiniBelowSpread;
     albiniBelowSpread = NULL;
-    delete massmanBelowSpread;
-    massmanBelowSpread = NULL;
+    delete massmanBelowSpreadUniZ0gHfuel;
+    massmanBelowSpreadUniZ0gHfuel = NULL;
+    delete massmanBelowSpreadUniZ0g01;
+    massmanBelowSpreadUniZ0g01 = NULL;
+    delete massmanBelowSpreadGaussZ0gHfuel;
+    massmanBelowSpreadGaussZ0gHfuel = NULL;
+    delete massmanBelowSpreadGaussZ0g01;
+    massmanBelowSpreadGaussZ0g01 = NULL;
     delete albiniAboveSpread;
     albiniAboveSpread = NULL;
     delete massmanAboveSpread;
