@@ -45,7 +45,7 @@ INCLUDE_DIRECTORIES(behave)
 
 ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy.cpp
-                           src/canopy_double_gaussian_distribution.cpp
+                           src/canopy_asymmetric_gaussian_distribution.cpp
                            src/canopy_normal_distribution.cpp
                            src/canopy_triangle_distribution.cpp
                            src/canopy_uniform_distribution.cpp
@@ -74,7 +74,7 @@ ADD_EXECUTABLE(compare_Albini   behave/behaveRun.cpp
                                 behave/windSpeedUtility.cpp
                                 src/canopyFlow.cpp
                                 src/canopy.cpp
-                                src/canopy_double_gaussian_distribution.cpp
+                                src/canopy_asymmetric_gaussian_distribution.cpp
                                 src/canopy_normal_distribution.cpp
                                 src/canopy_triangle_distribution.cpp
                                 src/canopy_uniform_distribution.cpp
