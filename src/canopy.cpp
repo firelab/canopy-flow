@@ -139,8 +139,7 @@ void canopy::initialize_memory()
         hacpz = new double[numNodes];
     if(!zetaz)
         zetaz = new double[numNodes];
-    if(!z0gh)
-        z0gh = z0g/canopyHeight;
+    z0gh = z0g/canopyHeight;
     cellsize = 1.0 / (numNodes - 1);    //cellsize here is normalized from 0 to 1
 }
 
