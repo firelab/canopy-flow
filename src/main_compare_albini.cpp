@@ -386,9 +386,12 @@ int main() {
     plscolbg(255,255,255);  //change background color
 
     pls->init();           // start plplot object
-    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
-    plscol0(2, 255, 0, 0);      //change the color pallet0 color #2 to be red (255,0,0)
-    plscol0(3, 255, 255, 255);  //change the color pallet0 color #3 to be white (255,255,255)
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black
+    plscol0(2, 255, 0, 0);      //change the color pallet0 color #2 to be red
+    plscol0(3, 255, 255, 255);  //change the color pallet0 color #3 to be white
+    plscol0(4, 0, 0, 255);  //change the color pallet0 color #4 to be blue
+    plscol0(5, 0, 255, 0);  //change the color pallet0 color #5 to be green
+    plscol0(6, 255, 165, 0);  //change the color pallet0 color #6 to be orange
     plcol0(1);              //now change our font color to be the color #1
 
     pls->adv( 0 );
@@ -397,8 +400,16 @@ int main() {
     pls->box( "bcnst", 0.0, 0, "bcnst", 0.0, 0 );
 
     pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) albiniBelowSpread);   //plot Albini
-    plcol0(2);              //now change our font color to be the color #2
     pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadUniZ0gHfuel);   //plot Massman
+
+    plcol0(2);              //now change our font color to be the color #2
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadUniZ0gHfuel);   //plot Massman Uniform, z0g=0.13*Hfuel
+    plcol0(4);              //now change our font color to be the color #4
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadUniZ0g01);   //plot Massman Uniform, z0g=0.01
+    plcol0(5);              //now change our font color to be the color #5
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadGaussZ0gHfuel);   //plot Massman Asymmetric Gauss, z0g=0.13*Hfuel
+    plcol0(6);              //now change our font color to be the color #6
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) massmanBelowSpreadGaussZ0g01);   //plot Massman Asymmetric Gauss, z0g=0.01
     plcol0(1);              //now change our font color to be the color #1
 
     pls->lsty(2);
@@ -426,10 +437,11 @@ int main() {
 //    PLFLT        symbol_scales[4];
 //    PLFLT        legend_width, legend_height;
 
+
     // First legend entry.
     opt_array[0]   = PL_LEGEND_LINE;
     text_colors[0] = 1;
-    text[0]        = "Albini, flames under canopy";
+    text[0]        = "Albini, sub-canopy flames";
     line_colors[0] = 1;
     line_styles[0] = 1;
     line_widths[0] = 1.;
@@ -438,7 +450,7 @@ int main() {
     // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE;
     text_colors[1]    = 2;
-    text[1]           = "Massman,flames under canopy";
+    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=Hfuel";
     line_colors[1]    = 2;
     line_styles[1]    = 1;
     line_widths[1]    = 1.;
@@ -450,25 +462,67 @@ int main() {
     // to do with boxes.
 
     // Third legend entry.
-    opt_array[2]   = PL_LEGEND_LINE;
-    text_colors[2] = 1;
-    text[2]        = "Albini, flames above canopy";
-    line_colors[2] = 1;
-    line_styles[2] = 2;
-    line_widths[2] = 1.;
-    symbols[2] = "";
+    opt_array[2]      = PL_LEGEND_LINE;
+    text_colors[2]    = 4;
+    text[2]           = "Massman, sub-canopy flames, uniform profile, z0g=0.01";
+    line_colors[2]    = 4;
+    line_styles[2]    = 1;
+    line_widths[2]    = 1.;
+    //symbol_colors[2]  = 3;
+    //symbol_scales[2]  = 1.;
+    //symbol_numbers[2] = 4;
+    symbols[2]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
 
     // Fourth legend entry.
     opt_array[3]      = PL_LEGEND_LINE;
-    text_colors[3]    = 2;
-    text[3]           = "Massman, flames above canopy";
-    line_colors[3]    = 2;
-    line_styles[3]    = 2;
+    text_colors[3]    = 5;
+    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=Hfuel";
+    line_colors[3]    = 5;
+    line_styles[3]    = 1;
     line_widths[3]    = 1.;
     //symbol_colors[3]  = 3;
     //symbol_scales[3]  = 1.;
     //symbol_numbers[3] = 4;
     symbols[3]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    // Fifth legend entry.
+    opt_array[4]      = PL_LEGEND_LINE;
+    text_colors[4]    = 6;
+    text[4]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=0.01";
+    line_colors[4]    = 6;
+    line_styles[4]    = 1;
+    line_widths[4]    = 1.;
+    //symbol_colors[4]  = 3;
+    //symbol_scales[4]  = 1.;
+    //symbol_numbers[4] = 4;
+    symbols[4]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    // Sixth legend entry.
+    opt_array[5]   = PL_LEGEND_LINE;
+    text_colors[5] = 1;
+    text[5]        = "Albini, above canopy flames";
+    line_colors[5] = 1;
+    line_styles[5] = 2;
+    line_widths[5] = 1.;
+    symbols[5] = "";
+
+    // Seventh legend entry.
+    opt_array[6]      = PL_LEGEND_LINE;
+    text_colors[6]    = 2;
+    text[6]           = "Massman, above canopy flames";
+    line_colors[6]    = 2;
+    line_styles[6]    = 2;
+    line_widths[6]    = 1.;
+    //symbol_colors[6]  = 3;
+    //symbol_scales[6]  = 1.;
+    //symbol_numbers[6] = 4;
+    symbols[6]        = "";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 
@@ -479,7 +533,7 @@ int main() {
                 0.03, 0.03, 0.1, 3,
                 1, 1, 1, 1,
                 nlegend, opt_array,
-                -3.0, 1.0, 2.0,
+                -3.0, 0.6, 1.0,
                 1., text_colors, (const char **) text,
                 NULL, NULL, NULL, NULL,
                 line_colors, line_styles, line_widths,
