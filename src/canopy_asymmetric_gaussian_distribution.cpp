@@ -1,5 +1,5 @@
 
-#include "canopy_double_gaussian_distribution.h"
+#include "canopy_asymmetric_gaussian_distribution.h"
 
 canopy_asymmetric_gaussian_distribution::canopy_asymmetric_gaussian_distribution() : canopy()
 {

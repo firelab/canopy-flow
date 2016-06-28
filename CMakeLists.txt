@@ -60,7 +60,7 @@ INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
 
 ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy.cpp
-                           src/canopy_double_gaussian_distribution.cpp
+                           src/canopy_asymmetric_gaussian_distribution.cpp
                            src/canopy_normal_distribution.cpp
                            src/canopy_triangle_distribution.cpp
                            src/canopy_uniform_distribution.cpp
@@ -69,3 +69,31 @@ ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/main.cpp)
 TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
 
+ADD_EXECUTABLE(compare_Albini   behave/behaveRun.cpp
+                                behave/behaveVector.cpp
+                                behave/crown.cpp
+                                behave/crownInputs.cpp
+                                behave/fuelModelSet.cpp
+                                behave/newext.cpp
+                                behave/palmettoGallberry.cpp
+                                behave/randfuel.cpp
+                                behave/randthread.cpp
+                                behave/surface.cpp
+                                behave/surfaceFireReactionIntensity.cpp
+                                behave/surfaceFuelbedIntermediates.cpp
+                                behave/surfaceInputs.cpp
+                                behave/surfaceFireSpread.cpp
+                                behave/surfaceTwoFuelModels.cpp
+                                behave/westernAspen.cpp
+                                behave/windAdjustmentFactor.cpp
+                                behave/windSpeedUtility.cpp
+                                src/canopyFlow.cpp
+                                src/canopy.cpp
+                                src/canopy_asymmetric_gaussian_distribution.cpp
+                                src/canopy_normal_distribution.cpp
+                                src/canopy_triangle_distribution.cpp
+                                src/canopy_uniform_distribution.cpp
+                                src/massman_distribution.cpp
+                                src/measured_distribution.cpp
+                                src/main_compare_albini.cpp)
+TARGET_LINK_LIBRARIES(compare_Albini ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
