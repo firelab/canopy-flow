@@ -167,8 +167,6 @@ int main() {
         massmanBelowSpreadGaussZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
     }
 
-    printf("%lf\n%lf\n%lf\n%lf\n", WAFarrayMassmanBelowUniZ0gHfuel[400], WAFarrayMassmanBelowUniZ0g01[400], WAFarrayMassmanBelowGaussZ0gHfuel[400], WAFarrayMassmanBelowGaussZ0g01[400]);
-
     //-------Above Canopy Flames-----------------------
     fuelModelNumber = 4;
     canopyHeight = fuelModelSet.getFuelbedDepth(fuelModelNumber) / 3.28084;                 //canopy height (m)
@@ -255,21 +253,21 @@ int main() {
     pls->mtex( "l", 3.0, 0.5, 0.5, "WAF" );
 
     // Draw a legend
-    PLINT        nlegend = 4;
-    const char   *text[4], *symbols[4];
-    PLINT        opt_array[4];
-    PLINT        text_colors[4];
-    PLINT        line_colors[4];
-    PLINT        line_styles[4];
-    PLFLT        line_widths[4];
-    PLINT        symbol_numbers[4], symbol_colors[4];
-    PLFLT        symbol_scales[4];
+    PLINT        nlegend = 7;
+    const char   *text[7], *symbols[7];
+    PLINT        opt_array[7];
+    PLINT        text_colors[7];
+    PLINT        line_colors[7];
+    PLINT        line_styles[7];
+    PLFLT        line_widths[7];
+    PLINT        symbol_numbers[7], symbol_colors[7];
+    PLFLT        symbol_scales[7];
     PLFLT        legend_width, legend_height;
 
     // First legend entry.
     opt_array[0]   = PL_LEGEND_LINE;
     text_colors[0] = 1;
-    text[0]        = "Albini, flames under canopy";
+    text[0]        = "Albini, sub-canopy flames";
     line_colors[0] = 1;
     line_styles[0] = 1;
     line_widths[0] = 1.;
@@ -278,7 +276,7 @@ int main() {
     // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE;
     text_colors[1]    = 2;
-    text[1]           = "Massman,flames under canopy";
+    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=Hfuel";
     line_colors[1]    = 2;
     line_styles[1]    = 1;
     line_widths[1]    = 1.;
@@ -290,25 +288,67 @@ int main() {
     // to do with boxes.
 
     // Third legend entry.
-    opt_array[2]   = PL_LEGEND_LINE;
-    text_colors[2] = 1;
-    text[2]        = "Albini, flames above canopy";
-    line_colors[2] = 1;
-    line_styles[2] = 2;
-    line_widths[2] = 1.;
-    symbols[2] = "";
+    opt_array[2]      = PL_LEGEND_LINE;
+    text_colors[2]    = 4;
+    text[2]           = "Massman, sub-canopy flames, uniform profile, z0g=0.01";
+    line_colors[2]    = 4;
+    line_styles[2]    = 1;
+    line_widths[2]    = 1.;
+    //symbol_colors[2]  = 3;
+    //symbol_scales[2]  = 1.;
+    //symbol_numbers[2] = 4;
+    symbols[2]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
 
     // Fourth legend entry.
     opt_array[3]      = PL_LEGEND_LINE;
-    text_colors[3]    = 2;
-    text[3]           = "Massman, flames above canopy";
-    line_colors[3]    = 2;
-    line_styles[3]    = 2;
+    text_colors[3]    = 5;
+    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=Hfuel";
+    line_colors[3]    = 5;
+    line_styles[3]    = 1;
     line_widths[3]    = 1.;
     //symbol_colors[3]  = 3;
     //symbol_scales[3]  = 1.;
     //symbol_numbers[3] = 4;
     symbols[3]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    // Fifth legend entry.
+    opt_array[4]      = PL_LEGEND_LINE;
+    text_colors[4]    = 6;
+    text[4]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=0.01";
+    line_colors[4]    = 6;
+    line_styles[4]    = 1;
+    line_widths[4]    = 1.;
+    //symbol_colors[4]  = 3;
+    //symbol_scales[4]  = 1.;
+    //symbol_numbers[4] = 4;
+    symbols[4]        = "";
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    // Sixth legend entry.
+    opt_array[5]   = PL_LEGEND_LINE;
+    text_colors[5] = 1;
+    text[5]        = "Albini, above canopy flames";
+    line_colors[5] = 1;
+    line_styles[5] = 2;
+    line_widths[5] = 1.;
+    symbols[5] = "";
+
+    // Seventh legend entry.
+    opt_array[6]      = PL_LEGEND_LINE;
+    text_colors[6]    = 2;
+    text[6]           = "Massman, above canopy flames";
+    line_colors[6]    = 2;
+    line_styles[6]    = 2;
+    line_widths[6]    = 1.;
+    //symbol_colors[6]  = 3;
+    //symbol_scales[6]  = 1.;
+    //symbol_numbers[6] = 4;
+    symbols[6]        = "";
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
 
@@ -319,7 +359,7 @@ int main() {
                 0.03, 0.03, 0.1, 3,
                 1, 1, 1, 1,
                 nlegend, opt_array,
-                -3.0, 1.0, 2.0,
+                -3.0, 0.6, 1.0,
                 1., text_colors, (const char **) text,
                 NULL, NULL, NULL, NULL,
                 line_colors, line_styles, line_widths,
