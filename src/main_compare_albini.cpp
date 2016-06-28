@@ -133,7 +133,7 @@ int main() {
 
     //change to asymmetric Gaussian canopy profile
     delete massman.C;
-    massman.C = new canopy_uniform_distribution(crownRatio);
+    massman.C = new canopy_asymmetric_gaussian_distribution(0.6, 0.2, 0.3);
     massman.C->canopyHeight = canopyHeight;
     massman.C->dragCoefAth = dragCoef;
     massman.C->z0g = groundRoughness;
@@ -146,12 +146,11 @@ int main() {
         //build plot arrays for Massman vs Albini WAF plot below canopy
         canopyCoverArray[i] = i * canopyCoverStepSize;
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
-        massman.C->z0g = 0.01;
         massman.computeWind();
-        WAFarrayMassmanBelowUniZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+        WAFarrayMassmanBelowGaussZ0gHfuel[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
 
-        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
-        massmanBelowSpreadUniZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowGaussZ0gHfuel[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadGaussZ0gHfuel[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
     }
 
     //compute Massman below canopy, asymmetric Gaussian canopy profile, z0g=0.01m
@@ -162,11 +161,13 @@ int main() {
         massman.C->leafAreaIndex = canopyHeight * crownRatio * canopyCoverArray[i] * betaSigma / (6.0 * pi);
         massman.C->z0g = 0.01;
         massman.computeWind();
-        WAFarrayMassmanBelowUniZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
+        WAFarrayMassmanBelowGaussZ0g01[i] = massman.get_windAdjustmentFactorShelteredMidFlame(inputHeight, midFlameHeight);
 
-        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowUniZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
-        massmanBelowSpreadUniZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
+        behave.updateSurfaceInputs(fuelModelNumber, moistureOneHour, moistureTenHour, moistureHundredHour, moistureLiveHerbaceous, moistureLiveWoody, WindHeightInputMode::DIRECT_MIDFLAME, WAFarrayMassmanBelowGaussZ0g01[i]*windSpeed, windDirection, slope, aspect, canopyCover, canopyHeight, crownRatio);
+        massmanBelowSpreadGaussZ0g01[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
     }
+
+    printf("%lf\n%lf\n%lf\n%lf\n", WAFarrayMassmanBelowUniZ0gHfuel[400], WAFarrayMassmanBelowUniZ0g01[400], WAFarrayMassmanBelowGaussZ0gHfuel[400], WAFarrayMassmanBelowGaussZ0g01[400]);
 
     //-------Above Canopy Flames-----------------------
     fuelModelNumber = 4;
@@ -216,9 +217,12 @@ int main() {
     plscolbg(255,255,255);  //change background color
 
     pls->init();           // start plplot object
-    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black (0,0,0)
-    plscol0(2, 255, 0, 0);      //change the color pallet0 color #2 to be red (255,0,0)
-    plscol0(3, 255, 255, 255);  //change the color pallet0 color #3 to be white (255,255,255)
+    plscol0(1, 0, 0, 0);        //change the color pallet0 color #1 to be black
+    plscol0(2, 255, 0, 0);      //change the color pallet0 color #2 to be red
+    plscol0(3, 255, 255, 255);  //change the color pallet0 color #3 to be white
+    plscol0(4, 0, 0, 255);  //change the color pallet0 color #4 to be blue
+    plscol0(5, 0, 255, 0);  //change the color pallet0 color #5 to be green
+    plscol0(6, 255, 165, 0);  //change the color pallet0 color #6 to be orange
     plcol0(1);              //now change our font color to be the color #1
 
     pls->adv( 0 );
@@ -228,7 +232,13 @@ int main() {
 
     pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayAlbiniBelow);   //plot Albini
     plcol0(2);              //now change our font color to be the color #2
-    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowUniZ0gHfuel);   //plot Massman
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowUniZ0gHfuel);   //plot Massman Uniform, z0g=0.13*Hfuel
+    plcol0(4);              //now change our font color to be the color #4
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowUniZ0g01);   //plot Massman Uniform, z0g=0.01
+    plcol0(5);              //now change our font color to be the color #5
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowGaussZ0gHfuel);   //plot Massman Asymmetric Gauss, z0g=0.13*Hfuel
+    plcol0(6);              //now change our font color to be the color #6
+    pls->line(plotNodes, (PLFLT*) canopyCoverArray,(PLFLT*) WAFarrayMassmanBelowGaussZ0g01);   //plot Massman Asymmetric Gauss, z0g=0.01
     plcol0(1);              //now change our font color to be the color #1
 
     pls->lsty(2);
