@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <fstream>
 #include "canopyFlow.h"
 #include "behaveRun.h"
 #include "fuelModelSet.h"
@@ -197,6 +198,47 @@ int main() {
         massmanAboveSpread[i] = behave.calculateSurfaceFireForwardSpreadRate(directionOfInterest);
     }
 
+    //Print WAF data to file
+    std::ofstream WAFfile;
+    WAFfile.open ("WAF_plot_data.txt");
+
+    WAFfile << "canopyCoverArray,WAFarrayAlbiniBelow,WAFarrayMassmanBelowUniZ0gHfuel,WAFarrayMassmanBelowUniZ0g01,WAFarrayMassmanBelowGaussZ0gHfuel,WAFarrayMassmanBelowGaussZ0g01,WAFarrayAlbiniAbove,WAFarrayMassmanAbove\n";
+
+    for(int i=1; i<plotNodes; i++)
+    {
+        WAFfile << canopyCoverArray[i] << ",";
+        WAFfile << WAFarrayAlbiniBelow[i] << ",";
+        WAFfile << WAFarrayMassmanBelowUniZ0gHfuel[i] << ",";
+        WAFfile << WAFarrayMassmanBelowUniZ0g01[i] << ",";
+        WAFfile << WAFarrayMassmanBelowGaussZ0gHfuel[i] << ",";
+        WAFfile << WAFarrayMassmanBelowGaussZ0g01[i] << ",";
+        WAFfile << WAFarrayAlbiniAbove[i] << ",";
+        WAFfile << WAFarrayMassmanAbove[i] << "\n";
+    }
+
+    WAFfile.close();
+
+    //Print spread rate data to file
+    std::ofstream SRfile;
+    SRfile.open ("spread_rate_plot_data.txt");
+
+    SRfile << "canopyCoverArray,albiniBelowSpread,massmanBelowSpreadUniZ0gHfuel,massmanBelowSpreadUniZ0g01,massmanBelowSpreadGaussZ0gHfuel,massmanBelowSpreadGaussZ0g01,albiniAboveSpread,massmanAboveSpread\n";
+
+    for(int i=1; i<plotNodes; i++)
+    {
+        SRfile << canopyCoverArray[i] << ",";
+        SRfile << albiniBelowSpread[i] << ",";
+        SRfile << massmanBelowSpreadUniZ0gHfuel[i] << ",";
+        SRfile << massmanBelowSpreadUniZ0g01[i] << ",";
+        SRfile << massmanBelowSpreadGaussZ0gHfuel[i] << ",";
+        SRfile << massmanBelowSpreadGaussZ0g01[i] << ",";
+        SRfile << albiniAboveSpread[i] << ",";
+        SRfile << massmanAboveSpread[i] << "\n";
+    }
+
+    SRfile.close();
+
+
     //----Build Albini vs Massman WAF plot-----------------
 
     PLFLT xmin = canopyCoverArray[0], ymin = 0.0, xmax = canopyCoverArray[plotNodes-1], ymax = 1.0;
@@ -276,7 +318,7 @@ int main() {
     // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE;
     text_colors[1]    = 2;
-    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=Hfuel";
+    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=0.13*Hfuel";
     line_colors[1]    = 2;
     line_styles[1]    = 1;
     line_widths[1]    = 1.;
@@ -304,7 +346,7 @@ int main() {
     // Fourth legend entry.
     opt_array[3]      = PL_LEGEND_LINE;
     text_colors[3]    = 5;
-    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=Hfuel";
+    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=0.13*Hfuel";
     line_colors[3]    = 5;
     line_styles[3]    = 1;
     line_widths[3]    = 1.;
@@ -450,7 +492,7 @@ int main() {
     // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE;
     text_colors[1]    = 2;
-    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=Hfuel";
+    text[1]           = "Massman, sub-canopy flames, uniform profile, z0g=0.13*Hfuel";
     line_colors[1]    = 2;
     line_styles[1]    = 1;
     line_widths[1]    = 1.;
@@ -478,7 +520,7 @@ int main() {
     // Fourth legend entry.
     opt_array[3]      = PL_LEGEND_LINE;
     text_colors[3]    = 5;
-    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=Hfuel";
+    text[3]           = "Massman, sub-canopy flames, asymmetric Gaussian profile, z0g=0.13*Hfuel";
     line_colors[3]    = 5;
     line_styles[3]    = 1;
     line_widths[3]    = 1.;
@@ -542,7 +584,22 @@ int main() {
     delete pls; // close plot
 
 
+    //Print flame height comparison data to file
+    std::ofstream FHfile;
+    FHfile.open ("flame_height_plot_data.txt");
 
+    FHfile << "flameHeightBelow,WAFBelowIntegral,WAFBelowMidFlame,flameHeightAbove,WAFAboveIntegral\n";
+
+    for(int i=1; i<plotNodes; i++)
+    {
+        FHfile << flameHeightBelow[i] << ",";
+        FHfile << WAFBelowIntegral[i] << ",";
+        FHfile << WAFBelowMidFlame[i] << ",";
+        FHfile << flameHeightAbove[i] << ",";
+        FHfile << WAFAboveIntegral[i] << "\n";
+    }
+
+    FHfile.close();
 
 
     //----Build Massman flame height comparison plot--------------------------------
@@ -634,14 +691,6 @@ int main() {
                 symbol_colors, symbol_scales, symbol_numbers, (const char **) symbols );
 
     delete pls; // close plot
-
-
-
-
-
-
-
-
 
 
     delete canopyCoverArray;
