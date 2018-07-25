@@ -3,7 +3,9 @@
 
 #include <math.h>
 #include <cstring>
+#ifdef PLPLOT
 #include <plstream.h>
+#endif
 #include "canopy.h"
 
 /*

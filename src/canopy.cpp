@@ -16,6 +16,7 @@ canopy::canopy()
     z0gh = 0.0;
 }
 
+
 canopy::canopy(canopy &rhs)
 {
     distributionType = rhs.distributionType;
@@ -151,6 +152,7 @@ void canopy::initialize()
     compute_foliage_drag_area_index();
 }
 
+#ifdef PLPLOT
 void canopy::plot()
 {
     double max = haz[0];
@@ -241,7 +243,7 @@ void canopy::plot()
     delete y;
     y = NULL;
 }
-
+#endif
 double canopy::get_dragCoef(double zOverh)
 {
     double d1 = 0.0;    //This is drag parameter #1.  It's value might be -1 <= d1 <= +1

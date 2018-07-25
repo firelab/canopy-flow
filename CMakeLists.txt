@@ -2,7 +2,7 @@
 # *
 # * $Id: CMakeLists.txt 1673 2012-07-23 16:44:53Z $
 # *
-# * Project:  WindNinja
+# * Project:  Canopy-Flow
 # * Purpose:  CMake script
 # * Author:   Jason Forthofer
 # *
@@ -51,12 +51,14 @@ PROJECT(canopy_flow)
 #SET(Boost_USE_MULTITHREAD OFF)
 #FIND_PACKAGE(Boost 1.41.1 COMPONENTS special_functions)
 #FIND_PACKAGE(Boost 1.41.1 COMPONENTS math REQUIRED)
-
-FIND_LIBRARY(PLPLOT_LIB plplotd)
-FIND_LIBRARY(PLPLOT_LIB_CXX plplotcxxd)
-FIND_PATH(PLPLOT_INCLUDES plstream.h /usr/include/plplot)
-
-INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
+option(PLPLOT "Enable PLPLOT" ON) #Enable/Disable plotting features
+if(PLPLOT)
+    FIND_LIBRARY(PLPLOT_LIB plplotd)
+    FIND_LIBRARY(PLPLOT_LIB_CXX plplotcxxd)
+    FIND_PATH(PLPLOT_INCLUDES plstream.h /usr/include/plplot)
+    INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
+    add_definitions(-DPLPLOT)
+endif(PLPLOT)
 
 ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy.cpp
@@ -67,4 +69,6 @@ ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/massman_distribution.cpp
                            src/measured_distribution.cpp
                            src/main.cpp)
-TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
+if(PLPLOT)
+    TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
+endif(PLPLOT)

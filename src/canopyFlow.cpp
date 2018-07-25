@@ -245,7 +245,7 @@ void canopyFlow::readData(std::string filename)
         measuredShear[i] /= uwmd;
     }
 }
-
+#ifdef PLPLOT
 void canopyFlow::plot()
 {
     double* y = new double[C->numNodes];
@@ -310,7 +310,9 @@ void canopyFlow::plot()
     delete y;
     y = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotWind(double inputSpeed, double inputHeight)
 {
 
@@ -456,7 +458,9 @@ void canopyFlow::plotWind(double inputSpeed, double inputHeight)
     delete z;
     z = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 {
 
@@ -708,7 +712,8 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     delete yFill;
     yFill = NULL;
 }
-
+#endif
+#ifdef PLPLOT
 void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
 {
     int plotNodes = 1000;
@@ -869,7 +874,9 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
     delete WAFarrayIntegral;
     WAFarrayIntegral = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
@@ -937,7 +944,9 @@ void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highL
     delete z0ohArray;
     z0ohArray = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 10000;
@@ -1005,7 +1014,9 @@ void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLA
     delete dohArray;
     dohArray = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
@@ -1080,7 +1091,9 @@ void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double hig
     delete one_dohArray;
     one_dohArray = NULL;
 }
+#endif
 
+#ifdef PLPLOT
 void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI)
 {
     int plotNodes = 1000;
@@ -1155,6 +1168,7 @@ void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI
     delete dohArray;
     dohArray = NULL;
 }
+#endif
 
 void canopyFlow::make_canopy(canopy::eCanopyType t)
 {
@@ -1360,6 +1374,7 @@ double canopyFlow::get_windAdjustmentFactorShelteredIntegral(double inputHeight,
         WAF = WAF * inter1;
     }else{  //midFlameHeight is above canopy top, which is not valid for this function (use unsheltered function)
         WAF = -1.0; //return negative number, meaning invalid
+//        get_windAdjustmentFactorUnshelteredIntegral(inputHeight,flameH)
     }
 
     return WAF;
@@ -1407,8 +1422,27 @@ double canopyFlow::get_windspeed(double inputSpeed, double inputHeight, double d
         return uhuH * log((desiredHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
     }
 }
-
+/**
+ * @brief canopyFlow::get_uhuH
+ * get the non dimensionalized height
+ *
+ * if the height is less than the canopy height, solve for uhuH using the
+ * input height,input speed and uzc
+ *
+ * otherwise, do what was previously here
+ *
+ * @param inputSpeed
+ * @param inputHeight
+ * @return
+ */
 double canopyFlow::get_uhuH(double inputSpeed, double inputHeight)
 {
-    return inputSpeed / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+    if(inputHeight<=C->canopyHeight) //This allows you to generate profiles based on wind speeds in/below the canopy
+    {
+        return (inputSpeed)/(uzc[(int)(inputHeight/(C->canopyHeight*C->cellsize) + 0.5)] * log(Iz0));
+    }
+    else //This is what it used to always do.
+    {
+        return inputSpeed / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
+    }
 }

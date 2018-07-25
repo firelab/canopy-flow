@@ -6,7 +6,9 @@
 #include <cmath>
 #include <stdexcept>
 //#include "boost/math/special_functions.hpp"
+#ifdef PLPLOT
 #include <plstream.h>
+#endif
 #include "canopy.h"
 #include "canopy_uniform_distribution.h"
 #include "canopy_asymmetric_gaussian_distribution.h"
