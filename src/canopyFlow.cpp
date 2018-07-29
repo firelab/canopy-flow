@@ -577,7 +577,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     // middle for the plot symbol - see "man plpoin"
     //pls->poin( numNodes, (PLFLT*) x,(PLFLT*) y, 9 );
 
-    //plot fill area for canopy    
+    //plot fill area for canopy
     plcol0(3);              //now change our font color to be the color #3
     pls->wind(0.0, maxHaz, ymin, ymax);  //reset window to haz coordinates
     pls->box("cmstv", 0.0, 0, "", 0.0, 0);
@@ -1314,7 +1314,9 @@ void canopyFlow::computeWind()
 
 
     z0oh = rough * one_doh * exp(-K/usuh);
-    printf("doh = %lf\nz0oh = %lf\n", doh, z0oh);
+    #ifdef VERBOSE_STATEMENTS
+      printf("doh = %lf\nz0oh = %lf\n", doh, z0oh);
+    #endif
 
     Iz0 = one_doh / z0oh;
 }

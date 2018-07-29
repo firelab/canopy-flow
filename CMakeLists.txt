@@ -26,15 +26,11 @@
 # * DEALINGS IN THE SOFTWARE.
 # *
 # ****************************************************************************/
-# This is set arbitrarily at 2.6.  If there is proof that it works better, 
+# This is set arbitrarily at 2.6.  If there is proof that it works better,
 # set it.  Also set all sub CMakeLists.txt
 # *****************************************************************************
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(canopy_flow)
-# *****************************************************************************
-# Project WindNinja, version 2.x.x.  At some point port the versioning to 
-# write a header.
-# *****************************************************************************
 
 # *****************************************************************************
 # Find boost libs, required for all builds.  1.41.1 may be arbitrary.
@@ -52,6 +48,7 @@ PROJECT(canopy_flow)
 #FIND_PACKAGE(Boost 1.41.1 COMPONENTS special_functions)
 #FIND_PACKAGE(Boost 1.41.1 COMPONENTS math REQUIRED)
 option(PLPLOT "Enable PLPLOT" ON) #Enable/Disable plotting features
+option(VERBOSE_STATEMENTS "Enable Standard Statements" ON)
 if(PLPLOT)
     FIND_LIBRARY(PLPLOT_LIB plplotd)
     FIND_LIBRARY(PLPLOT_LIB_CXX plplotcxxd)
@@ -59,6 +56,9 @@ if(PLPLOT)
     INCLUDE_DIRECTORIES(${PLPLOT_INCLUDES})
     add_definitions(-DPLPLOT)
 endif(PLPLOT)
+if(VERBOSE_STATEMENTS)
+		add_definitions(-DVERBOSE_STATEMENTS)
+endif(VERBOSE_STATEMENTS)
 
 ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy.cpp
@@ -68,7 +68,7 @@ ADD_EXECUTABLE(canopy_flow src/canopyFlow.cpp
                            src/canopy_uniform_distribution.cpp
                            src/massman_distribution.cpp
                            src/measured_distribution.cpp
-                           src/main.cpp)
+                           src/main.cxx)
 if(PLPLOT)
     TARGET_LINK_LIBRARIES(canopy_flow ${PLPLOT_LIB} ${PLPLOT_LIB_CXX})
 endif(PLPLOT)
