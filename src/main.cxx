@@ -25,7 +25,7 @@ using namespace std;
  * @param outputWindHeight
  * @return
  */
-double calc_singlePoiunt(double initialWindSpeed, double initialHeight,
+double calc_singlePoint(double initialWindSpeed, double initialHeight,
                          double canopy_height, double z0g, double leafAreaIndex,
                          double dragCoeff,double crownRatio,double outputWindHeight)
 {
@@ -101,6 +101,7 @@ void calc_pointArray(double initialWindSpeed, double initialHeight,
     outFile<<outSpeed<<endl;
   }
   outFile.close();
+  cout<<"-:Done:-"<<endl;
 }
 /**
  * @brief main
@@ -145,7 +146,7 @@ int main(int argc, char* argv[]) {
         double drag_coeff = atof(argv[7]);
         double crownRatio = atof(argv[8]);
         double outWindHeight = atof(argv[9]);
-        double output = calc_singlePoiunt(initialWindSpeed,
+        double output = calc_singlePoint(initialWindSpeed,
                                           initialHeight,
                                           canopy_height,
                                           z0_ground,
