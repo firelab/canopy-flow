@@ -1447,6 +1447,18 @@ double canopyFlow::get_uhuH(double inputSpeed, double inputHeight)
     }
 }
 
+/**
+ * @brief canopyFlow::gcalculateDimensionalWind
+ * rewritten from plotDimensionalWind to only include the measured calculations for wind and z
+ * 
+ * uses pass by reference to avoid needing a return statement
+ * 
+ * @param inputSpeed
+ * @param inputHeight
+ * @param z_output
+ * @param windSpeed_output
+ * @return
+ */
 void canopyFlow::calculateDimensionalWind(double inputSpeed, double inputHeight, std::vector<double>& z_output, std::vector<double>& windSpeed_output)
 {
     std::vector<double> measured_windSpeed, measured_z;

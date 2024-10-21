@@ -1,5 +1,13 @@
-#include <vector>
-#include "../src/canopyFlow.h"
+/*
+canopyFlowSwig.h
+Description: function definitions that we want exposed in python. Subject to change on how this works
+Main file at the botton used for testing functions before using SWIG
+Command for running the main
+g++ -g canopyFlowSwig.cpp ../src/canopyFlow.cpp ../src/canopy_uniform_distribution.cpp ../src/canopy_asymmetric_gaussian_distribution.cpp ../src/canopy_normal_distribution.cpp ../src/canopy_triangle_distribution.cpp ../src/massman_distribution.cpp ../src/canopy.cpp ../src/measured_distribution.cpp -o canopyFlowSwigExecutable
+*/
+
+
+#include "canopyFlowSwig.h"
 
 void uniformDistribution(double crownRatio, double leafAreaIndex, double canopyHeight, double dragCoefAth, double z0g, double numNodes, double inputSpeed, double inputHeight, std::vector<double>& windSpeed, std::vector<double>& z)
 {
@@ -158,7 +166,4 @@ int main() {
     std::cout << "All tests completed successfully!" << std::endl;
     return 0;
 }
-
-//g++ -g canopyFlowSwig.cpp ../src/canopyFlow.cpp ../src/canopy_uniform_distribution.cpp ../src/canopy_asymmetric_gaussian_distribution.cpp ../src/canopy_normal_distribution.cpp ../src/canopy_triangle_distribution.cpp ../src/massman_distribution.cpp ../src/canopy.cpp ../src/measured_distribution.cpp -o canopyFlowSwigExecutable
-
 */
