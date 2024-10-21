@@ -1446,3 +1446,33 @@ double canopyFlow::get_uhuH(double inputSpeed, double inputHeight)
         return inputSpeed / log((inputHeight - C->canopyHeight) / (z0oh * C->canopyHeight) + Iz0);
     }
 }
+
+void canopyFlow::calculateDimensionalWind(double inputSpeed, double inputHeight, std::vector<double>& z_output, std::vector<double>& windSpeed_output)
+{
+    std::vector<double> measured_windSpeed, measured_z;
+    if(measuredDataExists)
+    {
+        measured_z.resize(n_measured);
+        for(int i = 0; i < n_measured; i++)
+            measured_z[i] = measuredHeight[i] * C->canopyHeight;
+
+        measured_windSpeed.resize(n_measured);
+        for(int i = 0; i < n_measured; i++)
+            measured_windSpeed[i] = measuredSpeed[i] * log(Iz0) * get_uhuH(inputSpeed, inputHeight);
+    }
+
+    // Calculate the number of plot nodes (heights at which wind speed is evaluated)
+    int plotNodes = C->numNodes + (inputHeight - C->canopyHeight) / (C->cellsize * C->canopyHeight);
+
+    // Set up the z-axis (height levels)
+    z_output.resize(plotNodes);
+    for(int i = 0; i < plotNodes; i++) {
+        z_output[i] = i * C->cellsize * C->canopyHeight;
+    }
+
+    // Calculate wind speed at each height level
+    windSpeed_output.resize(plotNodes);
+    for(int i = 0; i < plotNodes; i++) {
+        windSpeed_output[i] = get_windspeed(inputSpeed, inputHeight, z_output[i]);
+    }
+}

@@ -98,11 +98,11 @@ int main() {
     int profileType = 1;    //  0 => sheltered;  1 => unsheltered;
 
     wind.plotDimensionalWind(inputSpeed, inputHeight);
-//    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
-//    wind.plotz0ohvsCdLAI(inputHeight, lowLAI, highLAI);
-//    wind.plotdohvsCdLAI(inputHeight, lowLAI, highLAI);
-//    wind.plotz0ohvsone_doh(inputHeight, lowLAI, highLAI);
-//    wind.plotz0ohvsdoh(inputHeight, lowLAI, highLAI);
+    wind.plotWAFvsCdLAI(inputHeight, midFlameHeight, lowLAI, highLAI, profileType);
+    wind.plotz0ohvsCdLAI(inputHeight, lowLAI, highLAI);
+    wind.plotdohvsCdLAI(inputHeight, lowLAI, highLAI);
+    wind.plotz0ohvsone_doh(inputHeight, lowLAI, highLAI);
+    wind.plotz0ohvsdoh(inputHeight, lowLAI, highLAI);
 
     std::cout << "Done!" << std::endl;
     return 0;

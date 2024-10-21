@@ -26,13 +26,13 @@
 # * DEALINGS IN THE SOFTWARE.
 # *
 # ****************************************************************************/
-# This is set arbitrarily at 2.6.  If there is proof that it works better, 
+# This is set arbitrarily at 2.6.  If there is proof that it works better,
 # set it.  Also set all sub CMakeLists.txt
 # *****************************************************************************
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(canopy_flow)
 # *****************************************************************************
-# Project WindNinja, version 2.x.x.  At some point port the versioning to 
+# Project WindNinja, version 2.x.x.  At some point port the versioning to
 # write a header.
 # *****************************************************************************
 

@@ -16,6 +16,7 @@
 #include "canopy_triangle_distribution.h"
 #include "massman_distribution.h"
 #include "measured_distribution.h"
+#include <vector>
 
 /*
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -41,6 +42,7 @@ public:
     void plotdohvsCdLAI(double inputHeight, double lowLAI, double highLAI);
     void plotz0ohvsone_doh(double inputHeight, double lowLAI, double highLAI);
     void plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI);
+    void calculateDimensionalWind(double inputSpeed, double inputHeight, std::vector<double>& z_output, std::vector<double>& windSpeed_output);
 
     void make_canopy(canopy::eCanopyType t);
     void make_canopy(canopy* X);    //takes a pointer to a base class (but object is actually a derived) and makes a clone of the object (same type and data)
