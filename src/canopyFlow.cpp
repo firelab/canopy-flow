@@ -245,9 +245,10 @@ void canopyFlow::readData(std::string filename)
         measuredShear[i] /= uwmd;
     }
 }
-#ifdef PLPLOT
+
 void canopyFlow::plot()
 {
+    #ifdef PLPLOT
     double* y = new double[C->numNodes];
     for(int i=0; i<C->numNodes; i++)
     {
@@ -305,17 +306,16 @@ void canopyFlow::plot()
 
     delete pls; // close plot
 
-    delete x;
+    delete[] x;
     x = NULL;
-    delete y;
+    delete[] y;
     y = NULL;
+    #endif
 }
-#endif
 
-#ifdef PLPLOT
 void canopyFlow::plotWind(double inputSpeed, double inputHeight)
 {
-
+#ifdef PLPLOT
     double* measured_windSpeed;
     double* measured_z;
     if(measuredDataExists)
@@ -453,17 +453,18 @@ void canopyFlow::plotWind(double inputSpeed, double inputHeight)
 
     delete pls; // close plot
 
-    delete windSpeed;
+    delete[] windSpeed;
     windSpeed = NULL;
-    delete z;
+    delete[] z;
     z = NULL;
-}
 #endif
+}
 
-#ifdef PLPLOT
+
+
 void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
 {
-
+#ifdef PLPLOT
     double* measured_windSpeed;
     double* measured_shear;
     double* measured_z;
@@ -517,6 +518,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
         if(C->haz[i]>maxHaz)
             maxHaz = C->haz[i];
     }
+    maxHaz = maxHaz/(C->cellsize * C->canopyHeight * C->numNodes);
 
     double maxWind = windSpeed[0];
     for(int i=0; i<plotNodes; i++)
@@ -591,7 +593,7 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
     yFill[0] = 0.0;
     for(int i=1; i<(haz_num-1); i++)
     {
-        xFill[i] = C->haz[i-1];
+        xFill[i] = C->haz[i-1]/(C->cellsize * C->canopyHeight * C->numNodes);
         yFill[i] = zCanopy[i-1];
     }
     xFill[haz_num-1] = 0.0;
@@ -699,23 +701,25 @@ void canopyFlow::plotDimensionalWind(double inputSpeed, double inputHeight)
         delete measured_z;
         measured_z = NULL;
     }
-    delete windSpeed;
+    delete[] windSpeed;
     windSpeed = NULL;
-    delete windShear;
+    delete[] windShear;
     windShear = NULL;
-    delete zCanopy;
+    delete[] zCanopy;
     zCanopy = NULL;
-    delete z;
+    delete[] z;
     z = NULL;
     delete xFill;
     xFill = NULL;
     delete yFill;
     yFill = NULL;
+    #endif
 }
-#endif
-#ifdef PLPLOT
+
+
 void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, double lowLAI, double highLAI, int profileType)
 {
+#ifdef PLPLOT
     int plotNodes = 1000;
     double* cdLAI = new double[plotNodes];
     double* WAFarrayMidFlame = new double[plotNodes];
@@ -867,18 +871,20 @@ void canopyFlow::plotWAFvsCdLAI(double inputHeight, double midFlameHeight, doubl
 
     delete pls; // close plot
 
-    delete cdLAI;
+    delete[] cdLAI;
     cdLAI = NULL;
-    delete WAFarrayMidFlame;
+    delete[] WAFarrayMidFlame;
     WAFarrayMidFlame = NULL;
-    delete WAFarrayIntegral;
+    delete[] WAFarrayIntegral;
     WAFarrayIntegral = NULL;
-}
 #endif
+}
 
-#ifdef PLPLOT
+
+
 void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
+#ifdef PLPLOT
     int plotNodes = 1000;
     double* cdLAI = new double[plotNodes];
     double* z0ohArray = new double[plotNodes];
@@ -939,16 +945,17 @@ void canopyFlow::plotz0ohvsCdLAI(double inputHeight, double lowLAI, double highL
 
     delete pls; // close plot
 
-    delete cdLAI;
+    delete[] cdLAI;
     cdLAI = NULL;
-    delete z0ohArray;
+    delete[] z0ohArray;
     z0ohArray = NULL;
-}
 #endif
+}
 
-#ifdef PLPLOT
+
 void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLAI)
 {
+#ifdef PLPLOT
     int plotNodes = 10000;
     double* cdLAI = new double[plotNodes];
     double* dohArray = new double[plotNodes];
@@ -1009,16 +1016,18 @@ void canopyFlow::plotdohvsCdLAI(double inputHeight, double lowLAI, double highLA
 
     delete pls; // close plot
 
-    delete cdLAI;
+    delete[] cdLAI;
     cdLAI = NULL;
-    delete dohArray;
+    delete[] dohArray;
     dohArray = NULL;
-}
 #endif
+}
 
-#ifdef PLPLOT
+
+
 void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double highLAI)
 {
+#ifdef PLPLOT
     int plotNodes = 1000;
     double* z0ohArray = new double[plotNodes];
     double* one_dohArray = new double[plotNodes];
@@ -1086,16 +1095,17 @@ void canopyFlow::plotz0ohvsone_doh(double inputHeight, double lowLAI, double hig
 
     delete pls; // close plot
 
-    delete z0ohArray;
+    delete[] z0ohArray;
     z0ohArray = NULL;
-    delete one_dohArray;
+    delete[] one_dohArray;
     one_dohArray = NULL;
-}
 #endif
+}
 
-#ifdef PLPLOT
+
 void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI)
 {
+#ifdef PLPLOT
     int plotNodes = 1000;
     double* z0ohArray = new double[plotNodes];
     double* dohArray = new double[plotNodes];
@@ -1163,12 +1173,13 @@ void canopyFlow::plotz0ohvsdoh(double inputHeight, double lowLAI, double highLAI
 
     delete pls; // close plot
 
-    delete z0ohArray;
+    delete[] z0ohArray;
     z0ohArray = NULL;
-    delete dohArray;
+    delete[] dohArray;
     dohArray = NULL;
-}
 #endif
+}
+
 
 void canopyFlow::make_canopy(canopy::eCanopyType t)
 {
@@ -1235,7 +1246,8 @@ void canopyFlow::computeWind()
             max_uzc = uzc[i];
     }
 
-    delete nzet;
+    delete[] nzet;
+    nzet = NULL;
 
     for(int i=0; i<C->numNodes; i++)
         uzc[i] /= max_uzc;

@@ -238,9 +238,9 @@ void canopy::plot()
 
     delete pls; // close plot
 
-    delete x;
+    delete[] x;
     x = NULL;
-    delete y;
+    delete[] y;
     y = NULL;
 }
 #endif

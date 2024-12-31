@@ -9,19 +9,19 @@ int main() {
     canopyFlow wind;
 
     //-------Uniform Distribution-----------------------
-    double crownRatio = 0.7;
-    wind.C = new canopy_uniform_distribution(crownRatio);
-    wind.C->leafAreaIndex = 1.0;
-    wind.C->canopyHeight = 8.0;                        //canopy height (m)
-    wind.C->dragCoefAth = 0.2;
+//    double crownRatio = 1.0;
+//    wind.C = new canopy_uniform_distribution(crownRatio);
+//    wind.C->leafAreaIndex = 1.0;
+//    wind.C->canopyHeight = 10.0;                        //canopy height (m)
+//    wind.C->dragCoefAth = 0.2;
 
     //-------Double Gaussian Distribution-----------------------
 //    double heightMaxFoliageDist = 0.36;
 //    double standardDevFoliageUpper = 0.6;
 //    double standardDevFoliageLower = 0.2;
-//    wind.C = new canopy_double_gaussian_distribution(heightMaxFoliageDist, standardDevFoliageUpper, standardDevFoliageLower);
+//    wind.C = new canopy_asymmetric_gaussian_distribution(heightMaxFoliageDist, standardDevFoliageUpper, standardDevFoliageLower);
 //    wind.C->leafAreaIndex = 1.0;
-//    wind.C->canopyHeight = 8.0;                        //canopy height (m)
+//    wind.C->canopyHeight = 10.0;                        //canopy height (m)
 //    wind.C->dragCoefAth = 0.2;
 
     //-------Normal Distribution-----------------------
@@ -33,15 +33,15 @@ int main() {
 //    wind.C->dragCoefAth = 0.2;
 
     //-------Triangle Distribution---------------------
-//    double A1 = 0.32;       //density of top
-//    double Ax = 1.0;          //density at max point
-//    double Ab = 0.02;       //density of bottom (trunk space)
-//    double zmax = 0.36;      //height to Ax (0 < zmax < 1)
-//    double zbot = 0.12;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
-//    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
-//    wind.C->leafAreaIndex = 3.28;
-//    wind.C->canopyHeight = 10.0;                        //canopy height (m)
-//    wind.C->dragCoefAth = 0.2;
+    double A1 = 0.4;       //density of top
+    double Ax = 1.0;          //density at max point
+    double Ab = 0.001;       //density of bottom (trunk space)
+    double zmax = 0.4;      //height to Ax (0 < zmax < 1)
+    double zbot = 0.399;      //height to bottom of triangular part (0 < zbot < 1; zbot < zmax)
+    wind.C = new canopy_triangle_distribution(A1, Ax, Ab, zmax, zbot);
+    wind.C->leafAreaIndex = 1.0;
+    wind.C->canopyHeight = 10.0;                        //canopy height (m)
+    wind.C->dragCoefAth = 0.2;
 
     //-------Massman Distribution----------------------
     //double A1 = 1.10;
@@ -82,7 +82,7 @@ int main() {
 
     //Set inputs
     wind.C->z0g = 0.0075;                      //ground roughness length (m), model is somewhat sensitive to this
-    wind.C->numNodes = 10001;                 //number of cells to use for numerical integration
+    wind.C->numNodes = 1001;                 //number of cells to use for numerical integration
 
     wind.computeWind();
 
